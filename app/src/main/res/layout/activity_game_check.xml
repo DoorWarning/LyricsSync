@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#410445"
+    tools:context=".Game_check">
+
+    <TextView
+        android:id="@+id/answer"
+        android:layout_width="199dp"
+        android:layout_height="60dp"
+        android:background="#f6dc43"
+        android:backgroundTint="#f6dc43"
+        android:textAlignment="center"
+        android:textColor="#410445"
+        android:textSize="10pt"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/page_title"
+        app:layout_constraintVertical_bias="0.836" />
+
+    <TextView
+        android:id="@+id/page_title"
+        android:layout_width="199dp"
+        android:layout_height="60dp"
+        android:background="#a5158c"
+        android:backgroundTint="#a5158c"
+        android:text="Game Title"
+        android:textAlignment="center"
+        android:textColor="#FFFFFF"
+        android:textSize="10pt"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.081" />
+</androidx.constraintlayout.widget.ConstraintLayout>

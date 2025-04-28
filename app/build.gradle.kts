@@ -32,6 +32,7 @@ android {
 }
 
 dependencies {
+    implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("org.json:json:20250107")
     implementation(libs.appcompat)
     implementation(libs.material)
