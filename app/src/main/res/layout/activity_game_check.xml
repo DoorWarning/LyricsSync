@@ -9,20 +9,22 @@
     tools:context=".Game_check">
 
     <TextView
-        android:id="@+id/answer"
-        android:layout_width="244dp"
-        android:layout_height="79dp"
-        android:background="@drawable/name_round_corner_rectangle"
+        android:id="@+id/page_title"
+        android:layout_width="260dp"
+        android:layout_height="61dp"
+        android:background="@drawable/botten_corner_rectangle_to_start"
         android:gravity="center"
+        android:text="이 문제의 정답은?"
         android:textAlignment="center"
-        android:textColor="#410445"
+        android:textColor="#FFFFFF"
         android:textSize="10pt"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/page_title"
-        app:layout_constraintVertical_bias="0.914" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.059" />
 
     <ScrollView
         android:layout_width="342dp"
@@ -57,20 +59,18 @@
     </ScrollView>
 
     <TextView
-        android:id="@+id/page_title"
-        android:layout_width="260dp"
-        android:layout_height="61dp"
-        android:background="@drawable/botten_corner_rectangle_to_start"
+        android:id="@+id/answer"
+        android:layout_width="244dp"
+        android:layout_height="79dp"
+        android:background="@drawable/name_round_corner_rectangle"
         android:gravity="center"
-        android:text="이 문제의 정답은?"
         android:textAlignment="center"
-        android:textColor="#FFFFFF"
+        android:textColor="#410445"
         android:textSize="10pt"
-        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.059" />
+        app:layout_constraintTop_toBottomOf="@id/page_title"
+        app:layout_constraintVertical_bias="0.914" />
 </androidx.constraintlayout.widget.ConstraintLayout>
