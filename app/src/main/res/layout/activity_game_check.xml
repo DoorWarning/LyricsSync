@@ -10,32 +10,67 @@
 
     <TextView
         android:id="@+id/answer"
-        android:layout_width="199dp"
-        android:layout_height="60dp"
-        android:background="#f6dc43"
-        android:backgroundTint="#f6dc43"
+        android:layout_width="244dp"
+        android:layout_height="79dp"
+        android:background="@drawable/name_round_corner_rectangle"
+        android:gravity="center"
         android:textAlignment="center"
         android:textColor="#410445"
         android:textSize="10pt"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/page_title"
-        app:layout_constraintVertical_bias="0.836" />
+        app:layout_constraintVertical_bias="0.914" />
+
+    <ScrollView
+        android:layout_width="342dp"
+        android:layout_height="439dp"
+        android:background="@drawable/scrollveiw_round_corner_rectangle"
+        app:layout_constraintBottom_toTopOf="@+id/answer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/page_title">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/dt_trancform"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="TextView"
+                android:textSize="40sp" />
+
+            <TextView
+                android:id="@+id/good_trancform"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="TextView"
+                android:textSize="40sp" />
+        </LinearLayout>
+    </ScrollView>
 
     <TextView
         android:id="@+id/page_title"
-        android:layout_width="199dp"
-        android:layout_height="60dp"
-        android:background="#a5158c"
-        android:backgroundTint="#a5158c"
-        android:text="Game Title"
+        android:layout_width="260dp"
+        android:layout_height="61dp"
+        android:background="@drawable/botten_corner_rectangle_to_start"
+        android:gravity="center"
+        android:text="이 문제의 정답은?"
         android:textAlignment="center"
         android:textColor="#FFFFFF"
         android:textSize="10pt"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.081" />
+        app:layout_constraintVertical_bias="0.059" />
 </androidx.constraintlayout.widget.ConstraintLayout>

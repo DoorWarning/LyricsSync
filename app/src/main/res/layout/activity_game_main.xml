@@ -8,21 +8,50 @@
     android:background="#410445"
     tools:context=".Game_main">
 
+    <TextView
+        android:id="@+id/timer"
+        android:layout_width="84dp"
+        android:layout_height="74dp"
+        android:background="@drawable/timer_backgrond"
+        android:gravity="center"
+        android:text=""
+        android:elevation="10dp" app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp" />
+
+
+    <ScrollView
+        android:id="@+id/scrollView2"
+        android:layout_width="364dp"
+        android:layout_height="423dp"
+        android:background="@drawable/scrollveiw_round_corner_rectangle"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.079">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+    </ScrollView>
+
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="371dp"
         android:layout_height="253dp"
-        android:layout_marginBottom="20dp"
         android:background="@drawable/vertical_liner_round_corner_rectangle"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/scrollView2">
 
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/fragmentContainerView2"
-            android:name="com.example.catch_pixel_ai.GameChat"
+        <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
-            android:layout_height="201dp"
+            android:layout_height="220dp"
             android:layout_weight="1" />
 
         <LinearLayout

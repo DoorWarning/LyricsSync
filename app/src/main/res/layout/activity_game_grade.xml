@@ -10,19 +10,30 @@
 
     <TextView
         android:id="@+id/Grade_title"
-        android:layout_width="245dp"
-        android:layout_height="58dp"
-        android:background="#a5158c"
-        android:backgroundTint="#a5158c"
-        android:text="추리왕 순위"
-        android:textAlignment="center"
+        android:layout_width="337dp"
+        android:layout_height="76dp"
+        android:background="@drawable/botten_corner_rectangle_to_start"
+        android:gravity="center_vertical"
+        android:text="   추리왕 순위"
         android:textColor="#FFFFFF"
         android:textSize="40sp"
         android:typeface="normal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.265"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.049" />
+        app:layout_constraintVertical_bias="0.039" />
+
+    <ScrollView
+        android:layout_width="370dp"
+        android:layout_height="600dp"
+        android:background="@drawable/vertical_liner_round_corner_rectangle"
+        tools:layout_editor_absoluteX="20dp"
+        tools:layout_editor_absoluteY="115dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+    </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
