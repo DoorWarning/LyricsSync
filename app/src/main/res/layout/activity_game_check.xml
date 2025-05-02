@@ -10,8 +10,8 @@
 
     <TextView
         android:id="@+id/page_title"
-        android:layout_width="260dp"
-        android:layout_height="61dp"
+        android:layout_width="340dp"
+        android:layout_height="65dp"
         android:background="@drawable/botten_corner_rectangle_to_start"
         android:gravity="center"
         android:text="이 문제의 정답은?"
@@ -60,8 +60,8 @@
 
     <TextView
         android:id="@+id/answer"
-        android:layout_width="244dp"
-        android:layout_height="79dp"
+        android:layout_width="344dp"
+        android:layout_height="82dp"
         android:background="@drawable/name_round_corner_rectangle"
         android:gravity="center"
         android:textAlignment="center"
