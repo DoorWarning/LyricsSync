@@ -1,0 +1,218 @@
+package com.example.catch_pixel_ai;
+
+import android.app.Application;
+import android.app.Service;
+import android.content.Intent;
+import android.os.Binder;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Looper;
+import android.util.Log;
+import android.webkit.ClientCertRequest;
+
+import androidx.annotation.Nullable;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
+import java.net.*;
+import java.util.*;
+import java.io.*;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import org.json.*;
+
+public class Client extends Service {
+    private static final String TAG = "NetworkClientService";
+    private static final String IP = "10.0.2.2"; //서버 아이피 주소 (10.0.2.2 : localhost)
+    private static final int PORT = 5555; //서버 포트
+
+    private ExecutorService networkExecutor;
+    private Socket socket; //서버 연결 소켓
+    private PrintWriter out; //서버로 메세지 전송용
+    private BufferedReader in; //서버로 부터 메세지 수신용
+    private String username; //클라이언트 사용자 이름
+    private String currentRoomName; //현재 참가 중인 방 이름
+    private final AtomicBoolean isConnected = new AtomicBoolean(false);
+    private final AtomicBoolean isRunning = new AtomicBoolean(false);
+    private LocalBroadcastManager broadcastManager;
+
+    public static final String ACTTION_CONNECT = "com.example.catch_pixel_ai.ACTTION_CONNECT";
+    public static final String ACTTION_DISCONNECT = "com.example.catch_pixel_ai.ACTTION_DISCONNECT";
+    public static final String ACTTION_SENDJSON = "com.example.catch_pixel_ai.ACTTION_SENDJSON";
+    public static final String ACTTION_MESSAGE_RECEIVED = "com.example.catch_pixel_ai.ACTTION_MESSAGE_RECEIVED";
+    public static final String ACTTION_CONNECTIONSTATUS = "com.example.catch_pixel_ai.ACTTION_CONNECTIONSTATUS";
+    public static final String EXTRA_USERNAME = "com.example.catch_pixel_ai.EXTRA_USERNAME";
+    public static final String EXTRA_JSONMSG = "com.example.catch_pixel_ai.EXTRA_JSONMSG";
+    public static final String EXTRA_CONNECTIONSTATUS = "com.example.catch_pixel_ai.EXTRA_CONNECTIONSTATUS";
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        Log.d(TAG, "Service Created!");
+        networkExecutor = Executors.newSingleThreadExecutor();
+        broadcastManager = LocalBroadcastManager.getInstance(this);
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d(TAG, "Service onStartCommand received.");
+        if(intent != null && intent.getAction() != null){
+            String action = intent.getAction();
+            Log.d(TAG, "Action: " + action);
+            switch (action){
+                case ACTTION_CONNECT:
+                    if(!isConnected.get()){
+                        username = intent.getStringExtra(EXTRA_USERNAME);
+                        connectAndListen();
+                    }else{
+                        Log.w(TAG, "Connect(action) ignored: Already connected.");
+                    }
+                    break;
+                case ACTTION_DISCONNECT:
+                    disconnect("Disconnect by UI");
+                    break;
+                case ACTTION_SENDJSON:
+                    if(isConnected.get()){
+                        String jsonMSG = intent.getStringExtra(EXTRA_JSONMSG);
+                        if(jsonMSG != null){
+                            sendMessageToServer(jsonMSG);
+                        }else{
+                            Log.w(TAG, "Send_JSON(action) ignored: Message is null");
+                        }
+                    }else{
+                        Log.w(TAG, "Send_JSON(action) ignored: Not connected.");
+                    }
+                    break;
+                default:
+                    Log.w(TAG, "Unknown action: " + action);
+                    break;
+            }
+        }else{
+            Log.w(TAG, "onStartCommand received null intent or action.");
+        }
+        //서비스가 강제 종료됬을 때 재시작 X
+        return START_NOT_STICKY;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "Servic destroying!!");
+        disconnect("Service destroyed");
+        if(networkExecutor != null && !networkExecutor.isShutdown()){
+            networkExecutor.shutdown();
+        }
+        Log.d(TAG, "Service destroyed.");
+    }
+
+    private void connectAndListen(){
+        if(isRunning.get()){
+            Log.w(TAG, "connectAndListen already running.");
+            return;
+        }
+        networkExecutor.submit(()->{
+           try {
+               closeResources();
+               Log.i(TAG, "Connecting to " + IP + ":" + PORT);
+               socket = new Socket(IP, PORT);
+               out = new PrintWriter(socket.getOutputStream(), true);
+               in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+               isRunning.set(true);
+               isConnected.set(true);
+
+               Log.i(TAG, "Connection success!!");
+               broadcastConnectionStatus(true);
+
+               JSONObject jsonObject = new JSONObject();
+               jsonObject.put("type", "connect");
+               jsonObject.put("username", username);
+               sendMessageToServer(jsonObject.toString());
+
+               String serverMsg;
+               while (isRunning.get() && (serverMsg = in.readLine()) !=null){
+                   broadcastMessage(serverMsg);
+               }
+               Log.d(TAG, "readLine null");
+           }catch (Exception e){
+
+           }finally {
+               disconnect("Listener loop finished.");
+           }
+        });
+    }
+
+    private void disconnect(String reason){
+        if(!isRunning.compareAndSet(true, false)){
+            return;
+        }
+        Log.i(TAG, "Disconnecting... Reason: " + reason);
+
+        if(networkExecutor!=null && !networkExecutor.isShutdown()){
+            networkExecutor.submit(this::closeResources);
+        }else{
+            closeResources();
+        }
+
+        if(isConnected.compareAndSet(true, false)){
+            broadcastConnectionStatus(false);
+        }
+    }
+
+    private void closeResources(){
+        try {
+            if(out!=null)
+                out.close();
+            if (in!=null)
+                in.close();
+            if(socket!=null && socket.isClosed())
+                socket.close();
+            Log.d(TAG, "Network resources closed.");
+        }catch (Exception e){
+            Log.e(TAG, "Error closing Network resources", e);
+        }finally {
+            out = null;
+            in = null;
+            socket = null;
+        }
+    }
+    private void sendMessageToServer(String jsonMessage){
+        if(isConnected.get() || out == null){
+            Log.w(TAG, "Cannot send message: Not connected!!");
+            return;
+        }
+        if (networkExecutor != null && !networkExecutor.isShutdown()){
+            networkExecutor.submit(()-> {
+                if (out != null && !out.checkError()) {
+                    out.println(jsonMessage);
+                    if (out.checkError()) { // 전송 후 즉시 오류 확인
+                        Log.e(TAG, "PrintWriter error after sending message.");
+                        disconnect("Error sending message");
+                    }
+                } else {
+                    Log.e(TAG, "Cannot send message: PrintWriter error.");
+                    disconnect("Error sending message");
+                }
+            });
+        }else{
+            Log.e(TAG, "Cannot send message: Executor service is not running.");
+        }
+    }
+    private void broadcastMessage(String message){
+        Intent intent = new Intent(ACTTION_MESSAGE_RECEIVED);
+        intent.putExtra(EXTRA_JSONMSG, message);
+        broadcastManager.sendBroadcast(intent);
+    }
+    private void broadcastConnectionStatus(boolean connedted){
+        Intent intent = new Intent(ACTTION_CONNECTIONSTATUS);
+        intent.putExtra(EXTRA_CONNECTIONSTATUS, connedted);
+        broadcastManager.sendBroadcast(intent);
+    }
+}
