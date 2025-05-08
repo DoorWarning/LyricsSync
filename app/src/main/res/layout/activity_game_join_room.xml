@@ -109,6 +109,15 @@
                     android:textStyle="bold" />
             </LinearLayout>
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/player_count"
+            android:layout_width="95dp"
+            android:layout_height="40dp"
+            android:background="@drawable/name_round_corner_rectangle"
+            android:gravity="center"
+            tools:layout_editor_absoluteX="267dp"
+            tools:layout_editor_absoluteY="92dp" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -145,17 +154,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.077" />
-
-        <TextView
-            android:id="@+id/player_count"
-            android:layout_width="95dp"
-            android:layout_height="40dp"
-            android:background="@drawable/name_round_corner_rectangle"
-            android:gravity="center"
-            app:layout_constraintBottom_toTopOf="@+id/index_player"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.811"
-            app:layout_constraintStart_toStartOf="parent" />
 
         <ScrollView
             android:id="@+id/index_player"
