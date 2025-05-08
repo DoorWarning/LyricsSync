@@ -8,83 +8,156 @@
     android:background="#410445"
     tools:context=".Game_main">
 
-    <TextView
-        android:id="@+id/timer"
-        android:layout_width="84dp"
-        android:layout_height="74dp"
-        android:background="@drawable/timer_backgrond"
-        android:gravity="center"
-        android:text=""
-        android:elevation="10dp" app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp" />
 
-
-    <ScrollView
-        android:id="@+id/scrollView2"
-        android:layout_width="364dp"
-        android:layout_height="423dp"
-        android:background="@drawable/scrollveiw_round_corner_rectangle"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/game_panel"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.079">
+        tools:visibility="gone">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" />
-    </ScrollView>
+        <ScrollView
+            android:id="@+id/scrollView2"
+            android:layout_width="364dp"
+            android:layout_height="423dp"
+            android:background="@drawable/scrollveiw_round_corner_rectangle"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.489"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.07999998">
 
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="371dp"
-        android:layout_height="253dp"
-        android:background="@drawable/vertical_liner_round_corner_rectangle"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/scrollView2">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:layout_width="match_parent"
-            android:layout_height="220dp"
-            android:layout_weight="1" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="10"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <EditText
-                android:id="@+id/chat"
-                android:layout_width="355dp"
-                android:layout_height="52dp"
-                android:layout_weight="1"
-                android:background="@drawable/edittext_rounded_corner_rectangle"
-                android:ems="10"
-                android:hint="정답(채팅)"
-                android:inputType="text"
-                android:textAlignment="center"
-                android:textColorHint="#ffffff"
-                android:textSize="14sp"
-                android:textStyle="bold" />
-
-            <Button
-                android:id="@+id/button2"
-                style="?android:attr/borderlessButtonStyle"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:background="@drawable/botten_corner_rectangle"
-                android:text="Button"
-                android:textColor="#4b1045"
-                android:textStyle="bold" />
+                android:orientation="vertical" />
+        </ScrollView>
+
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="371dp"
+            android:layout_height="253dp"
+            android:background="@drawable/vertical_liner_round_corner_rectangle"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/scrollView2">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="220dp"
+                android:layout_weight="1" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="10"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/chat"
+                    android:layout_width="355dp"
+                    android:layout_height="52dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/edittext_rounded_corner_rectangle"
+                    android:ems="10"
+                    android:hint="정답(채팅)"
+                    android:inputType="text"
+                    android:textAlignment="center"
+                    android:textColorHint="#ffffff"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/button2"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:background="@drawable/botten_corner_rectangle"
+                    android:text="Button"
+                    android:textColor="#4b1045"
+                    android:textStyle="bold" />
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
+
+        <TextView
+            android:id="@+id/timer"
+            android:layout_width="76dp"
+            android:layout_height="79dp"
+            android:background="@drawable/timer_backgrond"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.95"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.01999998" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/game_anser_panel"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:id="@+id/linearLayout3"
+            android:layout_width="367dp"
+            android:layout_height="75dp"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.024">
+
+            <TextView
+                android:id="@+id/Grade_title"
+                android:layout_width="284dp"
+                android:layout_height="75dp"
+                android:background="@drawable/botten_corner_rectangle_to_start"
+                android:gravity="center_vertical"
+                android:text="   추리왕 순위"
+                android:textColor="#FFFFFF"
+                android:textSize="40sp"
+                android:typeface="normal" />
+
+            <Button
+                android:id="@+id/hide_grade"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/name_round_corner_rectangle"
+                android:text="등수 숨김" />
+        </LinearLayout>
+
+        <ScrollView
+            android:id="@+id/scrollView3"
+            android:layout_width="370dp"
+            android:layout_height="600dp"
+            android:background="@drawable/vertical_liner_round_corner_rectangle"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.609"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout3"
+            app:layout_constraintVertical_bias="0.6">
+
+            <ListView
+                android:id="@+id/glade_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </ScrollView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

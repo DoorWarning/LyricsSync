@@ -16,9 +16,6 @@
             android:name=".game_join_room"
             android:exported="false" />
         <activity
-            android:name=".login"
-            android:exported="false" />
-        <activity
             android:name=".Game_grade"
             android:exported="false" />
         <activity

@@ -13,8 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:layout_editor_absoluteX="-80dp"
-        tools:layout_editor_absoluteY="33dp"
-        tools:visibility="gone">
+        tools:layout_editor_absoluteY="33dp">
 
         <Button
             android:id="@+id/creat_room_btn"
@@ -56,10 +55,9 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.353">
 
-            <LinearLayout
+            <ListView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical" />
+                android:layout_height="wrap_content" />
         </ScrollView>
 
         <LinearLayout
@@ -171,10 +169,9 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.363">
 
-            <LinearLayout
+            <ListView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical" />
+                android:layout_height="wrap_content" />
         </ScrollView>
 
         <LinearLayout
