@@ -6,7 +6,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#410445"
-    tools:context=".MainActivity">
+    tools:context=".LoginActivity">
+
+    <TextView
+        android:id="@+id/Tatle"
+        android:layout_width="199dp"
+        android:layout_height="60dp"
+        android:background="@drawable/textbox_round_corner_rectangle"
+        android:text="Game Title"
+        android:textAlignment="center"
+        android:gravity="center"
+        android:textColor="#FFFFFF"
+        android:textSize="10pt"
+        app:layout_constraintBottom_toTopOf="@+id/editUsername"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/editUsername"

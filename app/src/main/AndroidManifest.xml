@@ -25,15 +25,20 @@
             android:name=".Game_main"
             android:exported="false" />
         <activity
+            android:name=".LoginActivity"
+            android:exported="false"/>
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name=".Client"/>
+        <service
+            android:name=".Client"
+            android:enabled="true"
+            android:exported="false"/>
     </application>
     <uses-permission android:name="android.permission.INTERNET"/>
 </manifest>

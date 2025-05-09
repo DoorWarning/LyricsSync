@@ -1,11 +1,15 @@
 package com.example.catch_pixel_ai;
 
 import android.content.BroadcastReceiver;
+import android.content.Intent;
 import android.os.Bundle;
 
 import android.view.View;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -13,6 +17,9 @@ import androidx.core.view.WindowInsetsCompat;
 
 public class MainActivity extends AppCompatActivity {
     private BroadcastReceiver serviceMessageReceiver;
+    private String username;
+    ActivityResultLauncher<Intent> loginResult;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,8 +30,31 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        if(savedInstanceState == null){
+            startLoginActivity();
+            startService(new Intent(this, Client.class));
+        }else{
+            try {
+                username = savedInstanceState.get("USERNAME").toString();
+            }catch (Exception e){
+
+            }
+        }
+
     }
 
+    private void startLoginActivity(){
+        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+        loginResult = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+            if(result.getResultCode() == MainActivity.RESULT_OK){
+                Intent data  = result.getData();
+
+            }
+                });
+        loginResult.launch(intent);
+    }
     public void onClickUsername(View view){
 
     }
@@ -54,5 +84,11 @@ public class MainActivity extends AppCompatActivity {
     }
     public void OnClickCloseRanking(View view){
 
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("USERNMAE", username);
     }
 }
