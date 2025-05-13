@@ -1,32 +1,27 @@
 package com.example.catch_pixel_ai;
 
-import android.app.Application;
 import android.app.Service;
 import android.content.Intent;
-import android.os.Binder;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Looper;
 import android.util.Log;
-import android.webkit.ClientCertRequest;
 
 import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import java.net.*;
-import java.util.*;
-import java.io.*;
-import java.util.concurrent.Executor;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.json.*;
-
 public class Client extends Service {
     private static final String TAG = "NetworkClientService";
     private static final String IP = "10.0.2.2"; //서버 아이피 주소 (10.0.2.2 : localhost)
-    private static final int PORT = 5555; //서버 포트
+    private static final int PORT = 55555; //서버 포트
 
     private ExecutorService networkExecutor;
     private Socket socket; //서버 연결 소켓
@@ -37,12 +32,15 @@ public class Client extends Service {
     private final AtomicBoolean isConnected = new AtomicBoolean(false);
     private final AtomicBoolean isRunning = new AtomicBoolean(false);
     private LocalBroadcastManager broadcastManager;
-
+    
+    //Intent 식별용 ACTION 정의
     public static final String ACTTION_CONNECT = "com.example.catch_pixel_ai.ACTTION_CONNECT";
     public static final String ACTTION_DISCONNECT = "com.example.catch_pixel_ai.ACTTION_DISCONNECT";
     public static final String ACTTION_SENDJSON = "com.example.catch_pixel_ai.ACTTION_SENDJSON";
     public static final String ACTTION_MESSAGE_RECEIVED = "com.example.catch_pixel_ai.ACTTION_MESSAGE_RECEIVED";
     public static final String ACTTION_CONNECTIONSTATUS = "com.example.catch_pixel_ai.ACTTION_CONNECTIONSTATUS";
+
+    //Intent를 통해 데이터를 주고 받기 위한 EXTRA 정의
     public static final String EXTRA_USERNAME = "com.example.catch_pixel_ai.EXTRA_USERNAME";
     public static final String EXTRA_JSONMSG = "com.example.catch_pixel_ai.EXTRA_JSONMSG";
     public static final String EXTRA_CONNECTIONSTATUS = "com.example.catch_pixel_ai.EXTRA_CONNECTIONSTATUS";
@@ -57,7 +55,8 @@ public class Client extends Service {
     public void onCreate() {
         super.onCreate();
         Log.d(TAG, "Service Created!");
-        networkExecutor = Executors.newSingleThreadExecutor();
+//        networkExecutor = Executors.newSingleThreadExecutor();
+        networkExecutor = Executors.newFixedThreadPool(2); //네트워크 Thread 개수 2개 생성(서버 전송, 서버 응답)
         broadcastManager = LocalBroadcastManager.getInstance(this);
     }
 
@@ -119,33 +118,33 @@ public class Client extends Service {
             return;
         }
         networkExecutor.submit(()->{
-           try {
-               closeResources();
-               Log.i(TAG, "Connecting to " + IP + ":" + PORT);
-               socket = new Socket(IP, PORT);
-               out = new PrintWriter(socket.getOutputStream(), true);
-               in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-               isRunning.set(true);
-               isConnected.set(true);
+            try {
+//               closeResources();
+                Log.i(TAG, "Connecting to " + IP + ":" + PORT);
+                socket = new Socket(IP, PORT);
+                out = new PrintWriter(socket.getOutputStream(), true);
+                in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                isRunning.set(true);
+                isConnected.set(true);
 
-               Log.i(TAG, "Connection success!!");
-               broadcastConnectionStatus(true);
+                Log.i(TAG, "Connection success!!");
+                broadcastConnectionStatus(true);
 
-               JSONObject jsonObject = new JSONObject();
-               jsonObject.put("type", "connect");
-               jsonObject.put("username", username);
-               sendMessageToServer(jsonObject.toString());
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("type", "connect");
+                jsonObject.put("username", username);
+                sendMessageToServer(jsonObject.toString());
 
-               String serverMsg;
-               while (isRunning.get() && (serverMsg = in.readLine()) !=null){
-                   broadcastMessage(serverMsg);
-               }
-               Log.d(TAG, "readLine null");
-           }catch (Exception e){
-
-           }finally {
-               disconnect("Listener loop finished.");
-           }
+                String serverMsg;
+                while (isRunning.get() && (serverMsg = in.readLine()) !=null){
+                    broadcastMessage(serverMsg);
+                }
+                Log.d(TAG, "readLine null");
+            }catch (Exception e){
+                Log.e(TAG, "Exception in connectAndListen. Username: " + username, e);
+            }finally {
+                disconnect("Listener loop finished.");
+            }
         });
     }
 
@@ -172,7 +171,7 @@ public class Client extends Service {
                 out.close();
             if (in!=null)
                 in.close();
-            if(socket!=null && socket.isClosed())
+            if(socket!=null && !socket.isClosed())
                 socket.close();
             Log.d(TAG, "Network resources closed.");
         }catch (Exception e){
@@ -184,7 +183,7 @@ public class Client extends Service {
         }
     }
     private void sendMessageToServer(String jsonMessage){
-        if(isConnected.get() || out == null){
+        if(!isConnected.get() || out == null){
             Log.w(TAG, "Cannot send message: Not connected!!");
             return;
         }
@@ -192,6 +191,7 @@ public class Client extends Service {
             networkExecutor.submit(()-> {
                 if (out != null && !out.checkError()) {
                     out.println(jsonMessage);
+                    Log.i(TAG, "Message sent to server: " + jsonMessage);
                     if (out.checkError()) { // 전송 후 즉시 오류 확인
                         Log.e(TAG, "PrintWriter error after sending message.");
                         disconnect("Error sending message");
