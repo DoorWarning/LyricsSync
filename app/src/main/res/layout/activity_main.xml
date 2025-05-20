@@ -8,6 +8,20 @@
     android:background="#410445"
     tools:context=".MainActivity">
 
+    <TextView
+        android:id="@+id/game_title"
+        android:layout_width="291dp"
+        android:layout_height="79dp"
+        android:background="@drawable/textbox_round_corner_rectangle"
+        android:gravity="center"
+        android:text="Game title"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.149" />
+
     <EditText
         android:id="@+id/editUsername"
         android:layout_width="208dp"
