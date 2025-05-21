@@ -13,6 +13,7 @@
         android:id="@+id/game_panel"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -98,6 +99,84 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.01999998" />
 
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/panel_check_anser"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/page_title2"
+            android:layout_width="340dp"
+            android:layout_height="65dp"
+            android:background="@drawable/botten_corner_rectangle_to_start"
+            android:gravity="center"
+            android:text="이 문제의 정답은?"
+            android:textAlignment="center"
+            android:textColor="#FFFFFF"
+            android:textSize="10pt"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.496"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.059" />
+
+        <ScrollView
+            android:layout_width="342dp"
+            android:layout_height="439dp"
+            android:background="@drawable/scrollveiw_round_corner_rectangle"
+            app:layout_constraintBottom_toTopOf="@+id/answer2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/page_title2">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/dt_trancform"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="TextView"
+                    android:textSize="40sp" />
+
+                <TextView
+                    android:id="@+id/good_trancform"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="TextView"
+                    android:textSize="40sp" />
+            </LinearLayout>
+        </ScrollView>
+
+        <TextView
+            android:id="@+id/answer2"
+            android:layout_width="344dp"
+            android:layout_height="82dp"
+            android:background="@drawable/name_round_corner_rectangle"
+            android:gravity="center"
+            android:textAlignment="center"
+            android:textColor="#410445"
+            android:textSize="10pt"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.492"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/page_title2"
+            app:layout_constraintVertical_bias="0.914" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout

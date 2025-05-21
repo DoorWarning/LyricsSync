@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/timer_backgrond"
-    android:padding="10dp">
+    android:padding="10dp"
+    tools:context=".room_index">
 
-
+    <!-- TODO: Update blank fragment layout -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="80dp"
@@ -42,5 +44,4 @@
                 android:hint="00/00" />
         </LinearLayout>
     </LinearLayout>
-
-</RelativeLayout>
+</FrameLayout>
