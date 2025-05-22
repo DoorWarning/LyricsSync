@@ -9,7 +9,6 @@ import android.os.Bundle;
 
 import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
@@ -94,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
     }
     public void onClickStartGame(View view){
         //Game_main.Activity 실행
-        Intent intent = new Intent(MainActivity.this, Game_main.class);
+        Intent intent = new Intent(MainActivity.this, GameAcitivity.class);
         startActivity(intent);
     }
     public void onClickRoomMsg(View view){

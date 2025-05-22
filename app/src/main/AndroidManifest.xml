@@ -22,7 +22,7 @@
             android:name=".Game_check"
             android:exported="false" />
         <activity
-            android:name=".Game_main"
+            android:name=".GameAcitivity"
             android:exported="false" />
         <activity
             android:name=".LoginActivity"
