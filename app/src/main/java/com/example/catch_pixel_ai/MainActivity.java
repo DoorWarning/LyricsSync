@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
     private BroadcastReceiver serviceMessageReceiver;
     private String username;
     ActivityResultLauncher<Intent> loginResult;
-    private final String tag = "MAINLOBBY";
+    private final String tag = "MAINACTIVITY";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,32 +94,10 @@ public class MainActivity extends AppCompatActivity {
     public void onClickStartGame(View view){
         //Game_main.Activity 실행
         Intent intent = new Intent(MainActivity.this, GameAcitivity.class);
+        intent.putExtra("USERNAME", username);
         startActivity(intent);
     }
-    public void onClickRoomMsg(View view){
 
-    }
-    public void onClickGuess(View view){
-
-    }
-    public void onClickCreateRoom(View view){
-
-    }
-    public void OnClickExitProgram(View view){
-        //프로그램 종료
-    }
-    public void OnClickReady(View view){
-        //체크 표시 상태 & 서버에 레디 상태 변동 전송
-    }
-    public void OnClickSelectRoom(View view){
-        //게임 로비 패널 visible & 메인 로비 패널 hide
-    }
-    public void OnClickExitRoom(View view){
-        //게임 로비 패널 hide & 메인 로비 패널 visible
-    }
-    public void OnClickCloseRanking(View view){
-
-    }
     public void onClickLobbyMsg(View view){
 //        EditText editText = findViewById(R.id.inputText);
 //        String msg = editText.getText().toString();
@@ -226,7 +204,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString("USERNMAE", username);
+        outState.putString("USERNAME", username);
     }
     @Override
     protected void onStart() {
