@@ -95,31 +95,31 @@ public class GameAcitivity extends AppCompatActivity {
 
     //60초 타이머 실행
     private  void timerStart(){
-        second = 60;
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while(second >= 0 && timerFlag){
-                    try {
-                        Thread.sleep(1000);
-                    }catch (Exception e){
-
-                    }
-                    second--;
-                    //타이머를 표시하는 뷰를 가져와서 .post
-                    view.post(new Runnable(){
-                        @Override
-                        public void run() {
-                            view.setText(String.valueOf(second));
-                        }
-                    });
-                    //30초 일때
-                    if(second == 30){
-
-                    }
-                }
-            }
-        }).start();
+//        second = 60;
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                while(second >= 0 && timerFlag){
+//                    try {
+//                        Thread.sleep(1000);
+//                    }catch (Exception e){
+//
+//                    }
+//                    second--;
+//                    //타이머를 표시하는 뷰를 가져와서 .post
+//                    view.post(new Runnable(){
+//                        @Override
+//                        public void run() {
+//                            view.setText(String.valueOf(second));
+//                        }
+//                    });
+//                    //30초 일때
+//                    if(second == 30){
+//
+//                    }
+//                }
+//            }
+//        }).start();
     }
 
     private void timerStop(){

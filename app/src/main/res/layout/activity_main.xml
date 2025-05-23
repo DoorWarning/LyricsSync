@@ -12,9 +12,9 @@
         android:id="@+id/panel_befor_join"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:visibility="visible"
         tools:layout_editor_absoluteX="-170dp"
-        tools:layout_editor_absoluteY="16dp"
-        tools:visibility="gone">
+        tools:layout_editor_absoluteY="16dp">
 
         <Button
             android:id="@+id/creat_room_btn"
@@ -22,6 +22,7 @@
             android:layout_height="52dp"
             android:layout_marginTop="20dp"
             android:background="@drawable/botten_corner_rectangle_to_start"
+            android:onClick="onClickShowCreateRoom"
             android:text="방 생성"
             app:layout_constraintBottom_toTopOf="@+id/index_room"
             app:layout_constraintEnd_toEndOf="parent"
@@ -57,8 +58,9 @@
             app:layout_constraintVertical_bias="0.353">
 
             <ListView
+                android:id="@+id/listViewRoom"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="match_parent" />
         </ScrollView>
 
         <LinearLayout
@@ -72,7 +74,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/index_room">
 
-            <androidx.recyclerview.widget.RecyclerView
+            <ListView
                 android:id="@+id/chat_list_befor_join"
                 android:layout_width="match_parent"
                 android:layout_height="153dp"
@@ -107,6 +109,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="2"
                     android:background="@drawable/botten_corner_rectangle"
+                    android:onClick="onClickLobbyMsg"
                     android:text="등록"
                     android:textColor="#4b1045"
                     android:textStyle="bold" />
@@ -119,9 +122,9 @@
         android:id="@+id/panel_after_join"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:visibility="invisible"
         tools:layout_editor_absoluteX="-80dp"
-        tools:layout_editor_absoluteY="46dp"
-        tools:visibility="gone">
+        tools:layout_editor_absoluteY="46dp">
 
         <TextView
             android:id="@+id/player_count"
@@ -142,7 +145,7 @@
             android:layout_height="52dp"
             android:layout_marginTop="20dp"
             android:background="@drawable/botten_corner_rectangle_to_start"
-            android:text="방 생성"
+            android:text="레디"
             app:layout_constraintBottom_toTopOf="@+id/index_player"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.152"
@@ -156,6 +159,7 @@
             android:layout_height="50dp"
             android:layout_marginTop="20dp"
             android:background="@drawable/botten_corner_rectangle_to_start"
+            android:onClick="onClickLeaveRoom"
             android:text="나가기"
             app:layout_constraintBottom_toTopOf="@+id/index_player"
             app:layout_constraintEnd_toEndOf="parent"
@@ -177,8 +181,9 @@
             app:layout_constraintVertical_bias="0.363">
 
             <ListView
+                android:id="@+id/listViewPlayer"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="match_parent" />
         </ScrollView>
 
         <LinearLayout
@@ -192,7 +197,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/index_player">
 
-            <androidx.recyclerview.widget.RecyclerView
+            <ListView
                 android:id="@+id/chat_list_after_join"
                 android:layout_width="match_parent"
                 android:layout_height="153dp"
@@ -227,6 +232,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="2"
                     android:background="@drawable/botten_corner_rectangle"
+                    android:onClick="onClickRoomMsg"
                     android:text="Button"
                     android:textColor="#4b1045"
                     android:textStyle="bold" />
@@ -238,6 +244,7 @@
         android:id="@+id/panel_creat_room"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -264,7 +271,8 @@
                 android:background="@drawable/name_round_corner_rectangle"
                 android:ems="10"
                 android:hint="  방 이름"
-                android:inputType="text" />
+                android:inputType="text"
+                android:textAlignment="center" />
 
             <EditText
                 android:id="@+id/creat_round_count"
@@ -274,7 +282,8 @@
                 android:background="@drawable/name_round_corner_rectangle"
                 android:ems="10"
                 android:hint="  라운드 수"
-                android:inputType="text" />
+                android:inputType="number"
+                android:textAlignment="center" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -289,7 +298,8 @@
                     android:background="@drawable/name_round_corner_rectangle"
                     android:ems="10"
                     android:hint="  총 인원"
-                    android:inputType="text" />
+                    android:inputType="number"
+                    android:textAlignment="center" />
 
                 <Button
                     android:id="@+id/creat_room_check"
@@ -297,6 +307,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="2"
                     android:background="@drawable/botten_corner_rectangle_to_start"
+                    android:onClick="onClickCreateRoom"
                     android:text="확인" />
 
             </LinearLayout>

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.Nullable;
@@ -33,10 +34,18 @@ public class LoginActivity extends AppCompatActivity {
     public void onClickLogin(View view){
         EditText editText = findViewById(R.id.editUsername);
 
-        if(!editText.getText().toString().isEmpty()){
+        String input = editText.getText().toString();
+        
+        if(input.trim().isEmpty())
+            Toast.makeText(this, "닉네임을 입력해주세요.", Toast.LENGTH_SHORT).show();
+        else if (input.trim().length() < 2 || input.trim().length() > 12) {
+            Toast.makeText(this, "잘못된 닉네임입니다. 2자 이상 12자 이하를 입력하세요.", Toast.LENGTH_SHORT).show();
+        } else if (!input.matches("^[a-zA-Z0-9가-힣]*$")) {
+            Toast.makeText(this, "사용자 이름은 영문, 숫자, 한글만 사용 가능합니다.", Toast.LENGTH_SHORT).show();
+        } else{
             //username을 반환하기 위한 Intent 생성
             Intent intent = new Intent();
-            USERNAME = editText.getText().toString();
+            USERNAME = input;
             intent.putExtra("USERNAME", USERNAME);
             setResult(RESULT_OK, intent);
 

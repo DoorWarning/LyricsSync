@@ -8,20 +8,35 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.motion.widget.KeyCycle;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     private BroadcastReceiver serviceMessageReceiver;
@@ -29,7 +44,22 @@ public class MainActivity extends AppCompatActivity {
     ActivityResultLauncher<Intent> loginResult;
     private final String tag = "MAINACTIVITY";
     private ConstraintLayout lobyLayout;
-    private ConstraintLayout roomLayout;
+    private ConstraintLayout roomLayout ;
+    private ConstraintLayout roomPopupLayout;
+    private ArrayAdapter<String> chatsadapter;
+    private ListView lobbymsgLayout;
+    private ListView roommsgLayout;
+    ArrayList<String> roomNames;
+    ArrayList<Integer> roomCurrents;
+    ArrayList<Integer> roomCapacities;
+    ArrayList<Boolean> roomStarteds;
+    ArrayList<Integer> roomRounds;
+    ArrayList<String> roomplayers;
+    ArrayList<Boolean> playerReady;
+    private ListView roomListLayout;
+    private ListView playerListLayout;
+    private RoomList roomadapter;
+    private PlayerList playeradapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,15 +71,57 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
         lobyLayout = findViewById(R.id.panel_befor_join);
-        roomLayout = findViewById(R.id.panel_after_join);
+        roomLayout = findViewById(R.id.panel_after_join);;
+        roomPopupLayout = findViewById(R.id.panel_creat_room);
+        lobbymsgLayout = findViewById(R.id.chat_list_befor_join);
+        roommsgLayout = findViewById(R.id.chat_list_after_join);
+        roomListLayout = findViewById(R.id.listViewRoom);
+        playerListLayout = findViewById(R.id.listViewPlayer);
+
+        roomNames = new ArrayList<String>();
+        roomCurrents = new ArrayList<Integer>();
+        roomCapacities = new ArrayList<Integer>();
+        roomRounds = new ArrayList<Integer>();
+        roomStarteds = new ArrayList<Boolean>();
+        roomplayers = new ArrayList<String>();
+        playerReady = new ArrayList<Boolean>();
 
         lobyLayout.setVisibility(View.VISIBLE);
         roomLayout.setVisibility(View.INVISIBLE);
+        roomPopupLayout.setVisibility(View.INVISIBLE);
+
+        chatsadapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
+        roomadapter = new RoomList(this);
+        playeradapter = new PlayerList(this);
+
+        roomListLayout.setAdapter(roomadapter);
+        lobbymsgLayout.setAdapter(chatsadapter);
+        roommsgLayout.setAdapter(chatsadapter);
+        playerListLayout.setAdapter(playeradapter);
+
+        roomListLayout.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if(roomStarteds.get(position) == true){
+                    Toast.makeText(getBaseContext(), "이미 게임이 시작 된 방입니다.", Toast.LENGTH_SHORT).show();
+                }else{
+                    try {
+                        JSONObject jsonObject = new JSONObject();
+                        jsonObject.put("type", "joinRoom");
+                        jsonObject.put("roomName", roomNames.get(position));
+                        Intent intent = new Intent(getBaseContext(), Client.class);
+                        intent.setAction(Client.ACTTION_SENDJSON);
+                        intent.putExtra(Client.EXTRA_JSONMSG,jsonObject.toString());
+                        startService(intent);
+                    }catch (Exception e){
+
+                    }
+                }
+            }
+        });
 
         if(savedInstanceState == null){
-
             //LoginActivity 실행 후 username을 반환받기 위한 Launcher 등록 ** 무조건 onCreate에서 정의해야 오류X
             loginResult = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                     result -> {
@@ -85,6 +157,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             };
+
         }else{
             try {
                 //액티비가 멈춘 후 복구 되었을 때 복원 사항.
@@ -105,42 +178,162 @@ public class MainActivity extends AppCompatActivity {
         //Game_main.Activity 실행
         Intent intent = new Intent(MainActivity.this, GameAcitivity.class);
         intent.putExtra("USERNAME", username);
+        chatsadapter.clear();
         startActivity(intent);
     }
 
+    public void onClickShowCreateRoom(View view){
+        roomPopupLayout.setVisibility(View.VISIBLE);
+    }
+
+
     public void onClickCreateRoom(View view){
 
-    }
-    public void onClickEnterRoom(View view){
+        String roomName = ((EditText)findViewById(R.id.creat_room_title)).getText().toString();
+        String roomRound = ((EditText)findViewById(R.id.creat_round_count)).getText().toString();
+        String roomPlayer = ((EditText)findViewById(R.id.creat_player_count)).getText().toString();
 
+        if(roomName.isEmpty()){
+            Toast.makeText(this, "방 이름을 입력해주세요.", Toast.LENGTH_SHORT).show();
+        } else if (roomRound.isEmpty()) {
+            Toast.makeText(this, "라운드 수를 입력해주세요.", Toast.LENGTH_SHORT).show();
+        } else if (roomPlayer.isEmpty()) {
+            Toast.makeText(this, "총 인원을 입력해주세요.", Toast.LENGTH_SHORT).show();
+        } else if (!roomName.matches("^[a-zA-Z0-9가-힣]*$")) {
+            Toast.makeText(this, "방 이름은 영문, 숫자, 한글만 사용 가능합니다.", Toast.LENGTH_SHORT).show();
+        } else if (Integer.valueOf(roomPlayer) >9 || Integer.valueOf(roomPlayer) < 2) {
+            Toast.makeText(this, "잘못된 수용 인원입니다. 2에서 8 사이여야 합니다.", Toast.LENGTH_SHORT).show();
+        } else if (Integer.valueOf(roomRound) < 1) {
+            Toast.makeText(this, "잘못된 라운드 수 입니다. 1 이상여야 합니다.", Toast.LENGTH_SHORT).show();
+        } else{
+            try {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("type", "createRoom");
+                jsonObject.put("roomName", roomName);
+                jsonObject.put("capacity", roomPlayer);
+                jsonObject.put("totalRounds", roomRound);
+                Intent intent = new Intent(this, Client.class);
+                intent.setAction(Client.ACTTION_SENDJSON);
+                intent.putExtra(Client.EXTRA_JSONMSG, jsonObject.toString());
+                startService(intent);
+                ((EditText)findViewById(R.id.creat_round_count)).setText("");
+                ((EditText)findViewById(R.id.creat_room_title)).setText("");
+                ((EditText)findViewById(R.id.creat_player_count)).setText("");
+            }catch (Exception e){
+
+            }
+            roomPopupLayout.setVisibility(View.INVISIBLE);
+            roomLayout.setVisibility(View.VISIBLE);
+            lobyLayout.setVisibility(View.INVISIBLE);
+            chatsadapter.clear();
+        }
+    }
+
+    public void onClickLeaveRoom(View view){
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("type", "leaveRoom");
+            Intent intent = new Intent(this, Client.class);
+            intent.setAction(Client.ACTTION_SENDJSON);
+            intent.putExtra(Client.EXTRA_JSONMSG,jsonObject.toString());
+            startService(intent);
+            chatsadapter.clear();
+            roomLayout.setVisibility(View.INVISIBLE);
+            lobyLayout.setVisibility(View.VISIBLE);
+        }catch (Exception e){
+
+        }
     }
 
     public void onClickLobbyMsg(View view){
-//        EditText editText = findViewById(R.id.inputText);
-//        String msg = editText.getText().toString();
-//        if(!msg.isEmpty()){
-//            try{
-//                JSONObject jsonObject = new JSONObject();
-//                jsonObject.put("type", "message");
-//                jsonObject.put("username", username);
-//                jsonObject.put("text", msg);
-//                Intent intent = new Intent(this, Client.class);
-//                intent.setAction(Client.ACTTION_SENDJSON);
-//                intent.putExtra(Client.EXTRA_JSONMSG,jsonObject.toString());
-//                startService(intent);
-//                editText.setText("");
-//            }catch (Exception exception){
-//
-//            }
-//        }
+        EditText editText = findViewById(R.id.chat_befor_join);
+        String msg = editText.getText().toString();
+        if(!msg.isEmpty()){
+            try{
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("type", "message");
+                jsonObject.put("username", username);
+                jsonObject.put("text", msg);
+                Intent intent = new Intent(this, Client.class);
+                intent.setAction(Client.ACTTION_SENDJSON);
+                intent.putExtra(Client.EXTRA_JSONMSG,jsonObject.toString());
+                startService(intent);
+                editText.setText("");
+            }catch (Exception exception){
+
+            }
+        }
     }
 
-    private void handleCreateRoom(){
+    public void onClickRoomMsg(View view){
+        EditText editText = findViewById(R.id.chat_after_join);
+        String msg = editText.getText().toString();
+        if(!msg.isEmpty()){
+            try{
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("type", "message");
+                jsonObject.put("username", username);
+                jsonObject.put("text", msg);
+                Intent intent = new Intent(this, Client.class);
+                intent.setAction(Client.ACTTION_SENDJSON);
+                intent.putExtra(Client.EXTRA_JSONMSG,jsonObject.toString());
+                startService(intent);
+                editText.setText("");
+            }catch (Exception exception){
 
+            }
+        }
     }
 
-    private void handleMessage(){
+    private void handleRoomMSG(String message){
+        chatsadapter.add(message);
+    }
 
+    private void handleLobbyMSG(String message){
+        chatsadapter.add(message);
+    }
+
+    private void handleRoomInfo(JSONArray players){
+        roomPopupLayout.setVisibility(View.INVISIBLE);
+        roomLayout.setVisibility(View.VISIBLE);
+        lobyLayout.setVisibility(View.INVISIBLE);
+        chatsadapter.clear();
+
+        roomplayers.clear();
+        playerReady.clear();
+
+        if (players != null) {
+            for (int i = 0; i < players.length(); i++) {
+                JSONObject player = players.optJSONObject(i);
+                if (player != null) {
+                    roomplayers.add(player.optString("username"));
+                    playerReady.add(player.optBoolean("ready"));
+                }
+            }
+        }
+        runOnUiThread(() -> playeradapter.notifyDataSetChanged());
+    }
+
+    private void handleRoomList(JSONArray rooms){
+        roomNames.clear();
+        roomCurrents.clear();
+        roomCapacities.clear();
+        roomRounds.clear();
+        roomStarteds.clear();
+
+        if(rooms!= null && rooms.length()>0){
+            for(int i = 0; i < rooms.length(); i++){
+                JSONObject room = rooms.optJSONObject(i);
+                if(room != null && room.optInt("current")!=0){
+                    roomNames.add(room.optString("name"));
+                    roomCurrents.add(room.optInt("current"));
+                    roomCapacities.add(room.optInt("capacity"));
+                    roomRounds.add(room.optInt("rounds"));
+                    roomStarteds.add(room.optBoolean("gameStarted"));
+                }
+            }
+        }
+        runOnUiThread(() -> roomadapter.notifyDataSetChanged());
     }
 
     private void handleServerMessage(String jsonMessage){
@@ -154,20 +347,23 @@ public class MainActivity extends AppCompatActivity {
 
             switch (type) {
                 case "message":
+                    //게임 로비 메세지
                     logMessage = json.optString("username") + ": " + json.optString("text");
+                    handleRoomMSG(logMessage);
                     Log.i(tag,logMessage);
                     break;
                 case "lobbyMessage":
+                    //메인 로비 메세지
                     logMessage = json.optString("username") + ": " + json.optString("text");
+                    handleLobbyMSG(logMessage);
                     Log.i(tag,logMessage);
                     break;
                 case "roomList":
-                    logMessage = "[SYSTEM] 방 목록 업데이트됨 (구현 필요)";
                     Log.i(tag,logMessage);
-                    // TODO: 실제 앱에서는 이 데이터를 파싱하여 ListView/RecyclerView 업데이트
+                    handleRoomList(json.optJSONArray("rooms"));
                     break;
                 case "roomInfo":
-                    logMessage = "[SYSTEM] 방 정보 업데이트됨 (구현 필요)";
+                    handleRoomInfo(json.optJSONArray("players"));
                     Log.i(tag,logMessage);
                     // TODO: 방 정보 파싱하여 플레이어 목록, 준비 상태 등 업데이트
                     break;
@@ -210,4 +406,71 @@ public class MainActivity extends AppCompatActivity {
         //LocalBroadcastManager 해제.
         LocalBroadcastManager.getInstance(this).unregisterReceiver(serviceMessageReceiver);
     }
+
+    public class RoomList extends ArrayAdapter<String> {
+        private final Activity context;
+
+        public RoomList(Activity context){
+            super(context, R.layout.sample_room_view);
+            this.context = context;
+
+        }
+
+        @Override
+        public int getCount() {
+            return roomNames.size();
+        }
+
+        @NonNull
+        @Override
+        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+            LayoutInflater inflater = context.getLayoutInflater();
+            View rowView = inflater.inflate(R.layout.sample_room_view, null, true);
+
+            TextView player = (TextView) rowView.findViewById(R.id.room_count_player);
+            TextView round = (TextView) rowView.findViewById(R.id.room_count_round);
+            TextView name = (TextView) rowView.findViewById(R.id.room_player_name);
+
+            name.setText(roomNames.get(position));
+            round.setText("Round: " + roomRounds.get(position).toString());
+            player.setText("Player" + roomCurrents.get(position).toString() + "/" + roomCapacities.get(position).toString());
+
+            return rowView;
+        }
+    }
+
+    public class PlayerList extends ArrayAdapter<String>{
+        private final Activity context;
+
+        public PlayerList(Activity context){
+            super(context, R.layout.sample_sample_player_view);
+            this.context = context;
+        }
+
+        @Override
+        public int getCount() {
+            return roomplayers.size();
+        }
+
+        @NonNull
+        @Override
+        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+            LayoutInflater inflater = context.getLayoutInflater();
+            View rowView = inflater.inflate(R.layout.sample_sample_player_view, null, true);
+
+            TextView player = (TextView) rowView.findViewById(R.id.room_player_name1);
+            ImageView ready = (ImageView) rowView.findViewById(R.id.imageViewReady);
+            player.setText(roomplayers.get(position));
+            if(playerReady.get(position)){
+                //레디했을때이미지
+                ready.setVisibility(View.VISIBLE);
+            }else{
+                //레디 안했을때
+                ready.setVisibility(View.INVISIBLE);
+            }
+
+            return rowView;
+        }
+    }
 }
+
