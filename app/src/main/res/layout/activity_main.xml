@@ -12,9 +12,9 @@
         android:id="@+id/panel_befor_join"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:visibility="visible"
         tools:layout_editor_absoluteX="-170dp"
-        tools:layout_editor_absoluteY="16dp"
-        tools:visibility="gone">
+        tools:layout_editor_absoluteY="16dp">
 
         <Button
             android:id="@+id/creat_room_btn"
@@ -57,6 +57,7 @@
             app:layout_constraintVertical_bias="0.353">
 
             <ListView
+                android:id="@+id/listRooms"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
         </ScrollView>
@@ -119,6 +120,7 @@
         android:id="@+id/panel_after_join"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:visibility="invisible"
         tools:layout_editor_absoluteX="-80dp"
         tools:layout_editor_absoluteY="46dp"
         tools:visibility="gone">
@@ -285,6 +287,7 @@
                 android:ems="10"
                 android:hint="  총 인원"
                 android:inputType="text" />
+
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 

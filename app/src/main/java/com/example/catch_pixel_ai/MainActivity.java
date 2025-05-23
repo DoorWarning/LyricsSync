@@ -15,6 +15,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -27,6 +28,8 @@ public class MainActivity extends AppCompatActivity {
     private String username;
     ActivityResultLauncher<Intent> loginResult;
     private final String tag = "MAINACTIVITY";
+    private ConstraintLayout lobyLayout;
+    private ConstraintLayout roomLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +42,14 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
+        lobyLayout = findViewById(R.id.panel_befor_join);
+        roomLayout = findViewById(R.id.panel_after_join);
+
+        lobyLayout.setVisibility(View.VISIBLE);
+        roomLayout.setVisibility(View.INVISIBLE);
+
         if(savedInstanceState == null){
+
             //LoginActivity 실행 후 username을 반환받기 위한 Launcher 등록 ** 무조건 onCreate에서 정의해야 오류X
             loginResult = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                     result -> {
@@ -91,11 +101,18 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
         loginResult.launch(intent);
     }
-    public void onClickStartGame(View view){
+    private void startGameActivity(){
         //Game_main.Activity 실행
         Intent intent = new Intent(MainActivity.this, GameAcitivity.class);
         intent.putExtra("USERNAME", username);
         startActivity(intent);
+    }
+
+    public void onClickCreateRoom(View view){
+
+    }
+    public void onClickEnterRoom(View view){
+
     }
 
     public void onClickLobbyMsg(View view){
@@ -117,6 +134,15 @@ public class MainActivity extends AppCompatActivity {
 //            }
 //        }
     }
+
+    private void handleCreateRoom(){
+
+    }
+
+    private void handleMessage(){
+
+    }
+
     private void handleServerMessage(String jsonMessage){
         if(jsonMessage == null) return;
         try {
@@ -127,14 +153,6 @@ public class MainActivity extends AppCompatActivity {
             String logMessage = jsonMessage; // 기본적으로는 받은 JSON 그대로 로깅
 
             switch (type) {
-                case "connectSuccess":
-                    logMessage = "[SYSTEM] 서버 연결 성공: " + json.optString("message");
-                    Log.i(tag, logMessage);
-                    break;
-                case "error":
-                    logMessage = "[ERROR] " + json.optString("message");
-                    Log.i(tag,logMessage);
-                    break;
                 case "message":
                     logMessage = json.optString("username") + ": " + json.optString("text");
                     Log.i(tag,logMessage);
@@ -157,40 +175,12 @@ public class MainActivity extends AppCompatActivity {
                     logMessage = "[GAME] " + json.optString("message");
                     Log.i(tag,logMessage);
                     break;
-                case "songProblem":
-                    logMessage = "[문제] Round " + json.optInt("round") + ":\n" + json.optString("description");
-                    Log.i(tag,logMessage);
-                    break;
-                case "songHint":
-                    logMessage = "[힌트] " + json.optString("hint");
-                    Log.i(tag,logMessage);
-                    break;
-                case "guessResult":
-                    boolean correct = json.optBoolean("correct");
-                    if (correct) {
-                        logMessage = "[결과] " + json.optString("guesser") + " 정답! (+" + json.optInt("scoreEarned") + "점)";
-                    } else {
-                        // 오답은 UI에 표시하지 않거나, 본인 오답만 표시 (서버 로직 확인 필요)
-                        if(json.optString("guesser").equals(username)){ // 임시로 사용자 이름 비교
-                            logMessage = "[결과] '" + json.optString("guess") + "' (오답)";
-                        } else {
-                            logMessage = null; // 다른 사람 오답은 로그 안 함
-                        }
-                    }
-                    Log.i(tag,logMessage);
-                    break;
-                case "roundResult":
-                    logMessage = "[라운드 종료] " + json.optString("answer");
-                    // TODO: 점수판 업데이트
-                    Log.i(tag,logMessage);
-                    break;
-                case "gameOver":
-                    logMessage = "[게임 종료]\n" + json.optString("message");
-                    // TODO: 최종 결과 표시
-                    Log.i(tag,logMessage);
-                    break;
                 case "playerLeft":
                     logMessage = "[SYSTEM] " + json.optString("username") + "님이 나갔습니다.";
+                    Log.i(tag,logMessage);
+                    break;
+                default:
+                    logMessage = "[ERROR]" + "Unkown type: " + type;
                     Log.i(tag,logMessage);
                     break;
                 // 다른 메시지 타입 처리 추가...
