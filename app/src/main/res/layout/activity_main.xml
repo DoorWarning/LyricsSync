@@ -276,15 +276,32 @@
                 android:hint="  라운드 수"
                 android:inputType="text" />
 
-            <EditText
-                android:id="@+id/creat_player_count"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@drawable/name_round_corner_rectangle"
-                android:ems="10"
-                android:hint="  총 인원"
-                android:inputType="text" />
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/creat_player_count"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@drawable/name_round_corner_rectangle"
+                    android:ems="10"
+                    android:hint="  총 인원"
+                    android:inputType="text" />
+
+                <Button
+                    android:id="@+id/creat_room_check"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"
+                    android:background="@drawable/botten_corner_rectangle_to_start"
+                    android:text="확인" />
+
+            </LinearLayout>
+
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
