@@ -13,14 +13,14 @@
         android:id="@+id/game_panel"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:visibility="visible"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <ScrollView
-            android:id="@+id/scrollView2"
+            android:id="@+id/question_veiw"
             android:layout_width="364dp"
             android:layout_height="423dp"
             android:background="@drawable/scrollveiw_round_corner_rectangle"
@@ -32,13 +32,14 @@
             app:layout_constraintVertical_bias="0.07999998">
 
             <LinearLayout
+                android:id="@+id/question_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical" />
         </ScrollView>
 
         <LinearLayout
-            android:id="@+id/linearLayout"
+            android:id="@+id/chat_in_game"
             android:layout_width="371dp"
             android:layout_height="253dp"
             android:background="@drawable/vertical_liner_round_corner_rectangle"
@@ -46,14 +47,16 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/scrollView2">
+            app:layout_constraintTop_toBottomOf="@+id/question_veiw">
 
             <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/chat_list_in_game"
                 android:layout_width="match_parent"
                 android:layout_height="220dp"
                 android:layout_weight="1" />
 
             <LinearLayout
+                android:id="@+id/up_chat_in_game"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="10"
@@ -61,7 +64,7 @@
                 android:orientation="horizontal">
 
                 <EditText
-                    android:id="@+id/chat"
+                    android:id="@+id/chat_after_join"
                     android:layout_width="355dp"
                     android:layout_height="52dp"
                     android:layout_weight="1"
@@ -75,7 +78,7 @@
                     android:textStyle="bold" />
 
                 <Button
-                    android:id="@+id/button2"
+                    android:id="@+id/up_chat_after_join"
                     style="?android:attr/borderlessButtonStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -131,15 +134,17 @@
             app:layout_constraintVertical_bias="0.059" />
 
         <ScrollView
+            android:id="@+id/answer_viwe"
             android:layout_width="342dp"
             android:layout_height="439dp"
             android:background="@drawable/scrollveiw_round_corner_rectangle"
-            app:layout_constraintBottom_toTopOf="@+id/answer2"
+            app:layout_constraintBottom_toTopOf="@+id/answer"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/page_title2">
 
             <LinearLayout
+                android:id="@+id/answer_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
@@ -163,7 +168,7 @@
         </ScrollView>
 
         <TextView
-            android:id="@+id/answer2"
+            android:id="@+id/answer"
             android:layout_width="344dp"
             android:layout_height="82dp"
             android:background="@drawable/name_round_corner_rectangle"
@@ -180,17 +185,16 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/game_anser_panel"
+        android:id="@+id/game_grade_panel"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
-            android:id="@+id/linearLayout3"
+            android:id="@+id/grade_tatle"
             android:layout_width="367dp"
             android:layout_height="75dp"
             android:orientation="horizontal"
@@ -221,7 +225,7 @@
         </LinearLayout>
 
         <ScrollView
-            android:id="@+id/scrollView3"
+            android:id="@+id/grade_view"
             android:layout_width="370dp"
             android:layout_height="600dp"
             android:background="@drawable/vertical_liner_round_corner_rectangle"
@@ -229,7 +233,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.609"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout3"
+            app:layout_constraintTop_toBottomOf="@+id/grade_tatle"
             app:layout_constraintVertical_bias="0.6">
 
             <ListView
