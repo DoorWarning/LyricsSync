@@ -14,7 +14,8 @@
         android:layout_height="match_parent"
         android:visibility="visible"
         tools:layout_editor_absoluteX="-170dp"
-        tools:layout_editor_absoluteY="16dp">
+        tools:layout_editor_absoluteY="16dp"
+        tools:visibility="gone">
 
         <Button
             android:id="@+id/creat_room_btn"
@@ -126,7 +127,8 @@
         android:layout_height="match_parent"
         android:visibility="invisible"
         tools:layout_editor_absoluteX="-80dp"
-        tools:layout_editor_absoluteY="46dp">
+        tools:layout_editor_absoluteY="46dp"
+        tools:visibility="gone">
 
         <TextView
             android:id="@+id/player_count"
@@ -241,7 +243,8 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0">
+        app:layout_constraintVertical_bias="1.0"
+        tools:visibility="gone">
 
         <LinearLayout
             android:id="@+id/creat_room_infor"
@@ -305,5 +308,49 @@
 
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout
+        android:id="@+id/panel_exit_question"
+        android:layout_width="335dp"
+        android:layout_height="228dp"
+        android:background="@drawable/botten_corner_rectangle_to_start"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/exit_question"
+            android:layout_width="match_parent"
+            android:layout_height="174dp"
+            android:gravity="center"
+            android:background="@drawable/timer_backgrond"
+            android:text="정말로 종료하겠습니까?"
+            android:textSize="30dp" />
+
+        <LinearLayout
+            android:id="@+id/yes_no_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/yes_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/name_round_corner_rectangle"
+                android:text="예" />
+
+            <Button
+                android:id="@+id/no_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/name_round_corner_rectangle"
+                android:text="아니요" />
+        </LinearLayout>
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
