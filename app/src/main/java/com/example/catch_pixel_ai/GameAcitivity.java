@@ -6,10 +6,13 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -24,6 +27,9 @@ public class GameAcitivity extends AppCompatActivity {
     private final String tag = "GAMEACTIVITY";
     private int second;
     private boolean timerFlag = true;
+    private ConstraintLayout gamePanel;
+    private ConstraintLayout answerPanel;
+    private ConstraintLayout gradePanel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +43,14 @@ public class GameAcitivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        gamePanel = findViewById(R.id.game_panel);
+        answerPanel = findViewById(R.id.panel_check_anser);
+        gradePanel = findViewById(R.id.game_grade_panel);
+
+        gamePanel.setVisibility(View.VISIBLE);
+        answerPanel.setVisibility(View.INVISIBLE);
+        gamePanel.setVisibility(View.INVISIBLE);
 
         if(savedInstanceState == null){
             serviceMessageReceiver = new BroadcastReceiver() {
@@ -79,6 +93,11 @@ public class GameAcitivity extends AppCompatActivity {
         IntentFilter filter = new IntentFilter();
         filter.addAction(Client.ACTTION_MESSAGE_RECEIVED);
         LocalBroadcastManager.getInstance(this).registerReceiver(serviceMessageReceiver, filter);
+
+        gamePanel.setVisibility(View.VISIBLE);
+        answerPanel.setVisibility(View.INVISIBLE);
+        gamePanel.setVisibility(View.INVISIBLE);
+
         try {
             Intent intent = getIntent();
             username = intent.getStringExtra("USERNAME");
@@ -136,10 +155,6 @@ public class GameAcitivity extends AppCompatActivity {
             String logMessage = jsonMessage; // 기본적으로는 받은 JSON 그대로 로깅
 
             switch (type) {
-                case "connectSuccess":
-                    logMessage = "[SYSTEM] 서버 연결 성공: " + json.optString("message");
-                    Log.i(tag, logMessage);
-                    break;
                 case "error":
                     logMessage = "[ERROR] " + json.optString("message");
                     Log.i(tag,logMessage);
@@ -150,20 +165,6 @@ public class GameAcitivity extends AppCompatActivity {
                     break;
                 case "lobbyMessage":
                     logMessage = json.optString("username") + ": " + json.optString("text");
-                    Log.i(tag,logMessage);
-                    break;
-                case "roomList":
-                    logMessage = "[SYSTEM] 방 목록 업데이트됨 (구현 필요)";
-                    Log.i(tag,logMessage);
-                    // TODO: 실제 앱에서는 이 데이터를 파싱하여 ListView/RecyclerView 업데이트
-                    break;
-                case "roomInfo":
-                    logMessage = "[SYSTEM] 방 정보 업데이트됨 (구현 필요)";
-                    Log.i(tag,logMessage);
-                    // TODO: 방 정보 파싱하여 플레이어 목록, 준비 상태 등 업데이트
-                    break;
-                case "gameStart":
-                    logMessage = "[GAME] " + json.optString("message");
                     Log.i(tag,logMessage);
                     break;
                 case "songProblem":
@@ -208,5 +209,23 @@ public class GameAcitivity extends AppCompatActivity {
         } catch (Exception e) {
 
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(tag, "onDestroy called.");
+
+        if (isFinishing()) {
+            Log.d(tag, "GameActivity is finishing. Sending disconnect to service.");
+            Intent serviceIntent = new Intent(this, Client.class);
+            serviceIntent.setAction(Client.ACTTION_DISCONNECT);
+            startService(serviceIntent); // 서비스에 연결 해제 명령
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+
     }
 }

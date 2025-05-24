@@ -36,6 +36,7 @@
             android:layout_height="50dp"
             android:layout_marginTop="20dp"
             android:background="@drawable/botten_corner_rectangle_to_start"
+            android:onClick="onClickExit"
             android:text="나가기"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.815"
@@ -47,6 +48,7 @@
             android:layout_width="115dp"
             android:layout_height="54dp"
             android:background="@drawable/name_round_corner_rectangle"
+            android:onClick="onClickRefreshRoomList"
             android:text="새로고침"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -98,7 +100,7 @@
                     android:layout_weight="1"
                     android:background="@drawable/edittext_rounded_corner_rectangle"
                     android:ems="10"
-                    android:hint="정답(채팅)"
+                    android:hint="채팅"
                     android:inputType="text"
                     android:textAlignment="center"
                     android:textColorHint="#ffffff"
@@ -113,7 +115,7 @@
                     android:layout_weight="2"
                     android:background="@drawable/botten_corner_rectangle"
                     android:onClick="onClickLobbyMsg"
-                    android:text="등록"
+                    android:text="전송"
                     android:textColor="#4b1045"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -149,6 +151,7 @@
             android:layout_height="52dp"
             android:layout_marginTop="20dp"
             android:background="@drawable/botten_corner_rectangle_to_start"
+            android:onClick="onClickReady"
             android:text="레디"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.152"
@@ -211,7 +214,7 @@
                     android:layout_weight="1"
                     android:background="@drawable/edittext_rounded_corner_rectangle"
                     android:ems="10"
-                    android:hint="정답(채팅)"
+                    android:hint="채팅"
                     android:inputType="text"
                     android:textAlignment="center"
                     android:textColorHint="#ffffff"
@@ -226,7 +229,7 @@
                     android:layout_weight="2"
                     android:background="@drawable/botten_corner_rectangle"
                     android:onClick="onClickRoomMsg"
-                    android:text="Button"
+                    android:text="전송"
                     android:textColor="#4b1045"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -341,6 +344,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@drawable/name_round_corner_rectangle"
+                android:onClick="onClickExitYes"
                 android:text="예" />
 
             <Button
@@ -349,6 +353,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@drawable/name_round_corner_rectangle"
+                android:onClick="onClickExitNo"
                 android:text="아니요" />
         </LinearLayout>
     </LinearLayout>

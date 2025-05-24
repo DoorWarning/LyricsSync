@@ -13,8 +13,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -46,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     private ConstraintLayout lobyLayout;
     private ConstraintLayout roomLayout ;
     private ConstraintLayout roomPopupLayout;
+    private LinearLayout exitLayout;
     private ArrayAdapter<String> chatsadapter;
     private ListView lobbymsgLayout;
     private ListView roommsgLayout;
@@ -60,6 +63,8 @@ public class MainActivity extends AppCompatActivity {
     private ListView playerListLayout;
     private RoomList roomadapter;
     private PlayerList playeradapter;
+    private int currentRoomsNow;
+    private int currentRoomsTotal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,8 +81,9 @@ public class MainActivity extends AppCompatActivity {
         roomPopupLayout = findViewById(R.id.panel_creat_room);
         lobbymsgLayout = findViewById(R.id.chat_list_befor_join);
         roommsgLayout = findViewById(R.id.chat_list_after_join);
-        roomListLayout = findViewById(R.id.listViewRoom);
-        playerListLayout = findViewById(R.id.listViewPlayer);
+        roomListLayout = findViewById(R.id.index_room);
+        playerListLayout = findViewById(R.id.index_player);
+        exitLayout = findViewById(R.id.panel_exit_question);
 
         roomNames = new ArrayList<String>();
         roomCurrents = new ArrayList<Integer>();
@@ -90,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
         lobyLayout.setVisibility(View.VISIBLE);
         roomLayout.setVisibility(View.INVISIBLE);
         roomPopupLayout.setVisibility(View.INVISIBLE);
+        exitLayout.setVisibility(View.INVISIBLE);
 
         chatsadapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
         roomadapter = new RoomList(this);
@@ -132,6 +139,8 @@ public class MainActivity extends AppCompatActivity {
                             }catch (Exception e) {
 
                             }
+                        }else{
+                            finish();
                         }
                     });
 
@@ -183,9 +192,43 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClickShowCreateRoom(View view){
-        roomPopupLayout.setVisibility(View.VISIBLE);
+        if(roomPopupLayout.getVisibility() == View.INVISIBLE){
+            roomPopupLayout.setVisibility(View.VISIBLE);
+            ((Button)findViewById(R.id.creat_room_btn)).setText("생성 창 닫기");
+        }
+        else{
+            roomPopupLayout.setVisibility(View.INVISIBLE);
+            ((Button)findViewById(R.id.creat_room_btn)).setText("방 생성");
+        }
+
     }
 
+    public void onClickReady(View view){
+        try{
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("type", "ready");
+            jsonObject.put("status", true);
+            Intent intent = new Intent(this, Client.class);
+            intent.setAction(Client.ACTTION_SENDJSON);
+            intent.putExtra(Client.EXTRA_JSONMSG,jsonObject.toString());
+            startService(intent);
+        }catch (Exception exception){
+
+        }
+    }
+
+    public void onClickRefreshRoomList(View view){
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("type", "getRoomList");
+            Intent intent = new Intent(this, Client.class);
+            intent.setAction(Client.ACTTION_SENDJSON);
+            intent.putExtra(Client.EXTRA_JSONMSG,jsonObject.toString());
+            startService(intent);
+        }catch (Exception e){
+
+        }
+    }
 
     public void onClickCreateRoom(View view){
 
@@ -227,6 +270,18 @@ public class MainActivity extends AppCompatActivity {
             lobyLayout.setVisibility(View.INVISIBLE);
             chatsadapter.clear();
         }
+    }
+
+    public void onClickExit(View view){
+        exitLayout.setVisibility(View.VISIBLE);
+    }
+
+    public void onClickExitYes(View view){
+        finish();
+    }
+
+    public void onClickExitNo(View view){
+        exitLayout.setVisibility(View.INVISIBLE);
     }
 
     public void onClickLeaveRoom(View view){
@@ -297,8 +352,9 @@ public class MainActivity extends AppCompatActivity {
         roomPopupLayout.setVisibility(View.INVISIBLE);
         roomLayout.setVisibility(View.VISIBLE);
         lobyLayout.setVisibility(View.INVISIBLE);
-        chatsadapter.clear();
 
+
+        chatsadapter.clear();
         roomplayers.clear();
         playerReady.clear();
 
@@ -311,6 +367,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
+
         runOnUiThread(() -> playeradapter.notifyDataSetChanged());
     }
 
@@ -364,15 +421,26 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case "roomInfo":
                     handleRoomInfo(json.optJSONArray("players"));
+                    currentRoomsNow = json.optInt("currentGameSize");
+                    currentRoomsTotal = json.optInt("capacity");
                     Log.i(tag,logMessage);
                     // TODO: 방 정보 파싱하여 플레이어 목록, 준비 상태 등 업데이트
                     break;
                 case "gameStart":
                     logMessage = "[GAME] " + json.optString("message");
                     Log.i(tag,logMessage);
+                    startGameActivity();
                     break;
                 case "playerLeft":
                     logMessage = "[SYSTEM] " + json.optString("username") + "님이 나갔습니다.";
+                    Log.i(tag,logMessage);
+                    break;
+                case "error":
+                    logMessage = "[ERROR] " + json.optString("message");
+                    Toast.makeText(this, logMessage, Toast.LENGTH_SHORT).show();
+                    Log.i(tag, logMessage);
+                case "songProblem":
+                    logMessage = "[문제] Round " + json.optInt("round") + ":\n" + json.optString("description");
                     Log.i(tag,logMessage);
                     break;
                 default:
@@ -405,6 +473,19 @@ public class MainActivity extends AppCompatActivity {
         super.onStop();
         //LocalBroadcastManager 해제.
         LocalBroadcastManager.getInstance(this).unregisterReceiver(serviceMessageReceiver);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(tag, "MainActivity onDestroy called.");
+
+        if (isFinishing()) {
+            Log.d(tag, "MainActivity is finishing. Sending disconnect to service.");
+            Intent serviceIntent = new Intent(this, Client.class);
+            serviceIntent.setAction(Client.ACTTION_DISCONNECT);
+            startService(serviceIntent); // 서비스에 연결 해제 명령
+        }
     }
 
     public class RoomList extends ArrayAdapter<String> {
@@ -460,6 +541,7 @@ public class MainActivity extends AppCompatActivity {
 
             TextView player = (TextView) rowView.findViewById(R.id.room_player_name1);
             ImageView ready = (ImageView) rowView.findViewById(R.id.imageViewReady);
+            ((TextView)findViewById(R.id.player_count)).setText(Integer.toString(currentRoomsNow)+ "/" + Integer.toString(currentRoomsTotal));
             player.setText(roomplayers.get(position));
             if(playerReady.get(position)){
                 //레디했을때이미지
@@ -471,6 +553,10 @@ public class MainActivity extends AppCompatActivity {
 
             return rowView;
         }
+    }
+    @Override
+    public void onBackPressed() {
+
     }
 }
 

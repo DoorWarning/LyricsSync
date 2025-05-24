@@ -18,7 +18,8 @@ import org.json.JSONObject;
 
 public class LoginActivity extends AppCompatActivity {
     private String USERNAME;
-
+    private long backKeyPressedTime = 0;
+    private Toast toast;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,7 +60,25 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-//    private void handleServerMessage(String jsonMessage){
+    @Override
+    public void onBackPressed() {
+
+        if (System.currentTimeMillis() > backKeyPressedTime + 2500) {
+            backKeyPressedTime = System.currentTimeMillis();
+            toast = Toast.makeText(this, "뒤로 가기 버튼을 한 번 더 누르시면 종료됩니다.", Toast.LENGTH_LONG);
+            toast.show();
+            return;
+        }
+        if (System.currentTimeMillis() <= backKeyPressedTime + 2500) {
+            finish();
+
+            toast.cancel();
+            toast = Toast.makeText(this,"앱을 종료합니다.",Toast.LENGTH_LONG);
+            toast.show();
+        }
+    }
+
+    //    private void handleServerMessage(String jsonMessage){
 //        if(jsonMessage == null) return;
 //        try {
 //            JSONObject json = new JSONObject(jsonMessage);
