@@ -133,39 +133,35 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.059" />
 
-        <ScrollView
-            android:id="@+id/answer_viwe"
+        <LinearLayout
+            android:id="@+id/answer_list"
             android:layout_width="342dp"
             android:layout_height="439dp"
             android:background="@drawable/scrollveiw_round_corner_rectangle"
+            android:orientation="vertical"
             app:layout_constraintBottom_toTopOf="@+id/answer"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/page_title2">
+            app:layout_constraintTop_toBottomOf="@+id/page_title2"
+            tools:layout_editor_absoluteX="35dp"
+            tools:layout_editor_absoluteY="134dp">
 
-            <LinearLayout
-                android:id="@+id/answer_list"
+            <TextView
+                android:id="@+id/dt_trancform"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:gravity="center"
+                android:text="TextView"
+                android:textSize="40sp" />
 
-                <TextView
-                    android:id="@+id/dt_trancform"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="TextView"
-                    android:textSize="40sp" />
-
-                <TextView
-                    android:id="@+id/good_trancform"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="TextView"
-                    android:textSize="40sp" />
-            </LinearLayout>
-        </ScrollView>
+            <TextView
+                android:id="@+id/good_trancform"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="TextView"
+                android:textSize="40sp" />
+        </LinearLayout>
 
         <TextView
             android:id="@+id/answer"
@@ -222,10 +218,11 @@
                 android:layout_weight="1"
                 android:background="@drawable/name_round_corner_rectangle"
                 android:text="등수 숨김" />
+
         </LinearLayout>
 
-        <ScrollView
-            android:id="@+id/grade_view"
+        <ListView
+            android:id="@+id/glade_list"
             android:layout_width="370dp"
             android:layout_height="600dp"
             android:background="@drawable/vertical_liner_round_corner_rectangle"
@@ -234,13 +231,7 @@
             app:layout_constraintHorizontal_bias="0.609"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/grade_tatle"
-            app:layout_constraintVertical_bias="0.6">
-
-            <ListView
-                android:id="@+id/glade_list"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-        </ScrollView>
+            app:layout_constraintVertical_bias="0.6" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

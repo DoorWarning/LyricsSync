@@ -24,12 +24,10 @@
             android:background="@drawable/botten_corner_rectangle_to_start"
             android:onClick="onClickShowCreateRoom"
             android:text="방 생성"
-            app:layout_constraintBottom_toTopOf="@+id/index_room"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.152"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.078" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/exit_btn"
@@ -38,12 +36,10 @@
             android:layout_marginTop="20dp"
             android:background="@drawable/botten_corner_rectangle_to_start"
             android:text="나가기"
-            app:layout_constraintBottom_toTopOf="@+id/index_room"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.815"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.077" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/refresh_btn"
@@ -58,23 +54,17 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.113" />
 
-        <ScrollView
+        <ListView
             android:id="@+id/index_room"
-            android:layout_width="328dp"
-            android:layout_height="346dp"
+            android:layout_width="324dp"
+            android:layout_height="368dp"
             android:background="@drawable/scrollveiw_round_corner_rectangle"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.481"
+            app:layout_constraintHorizontal_bias="0.494"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.353">
-
-            <ListView
-                android:id="@+id/listViewRoom"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-        </ScrollView>
+            app:layout_constraintVertical_bias="0.363" />
 
         <LinearLayout
             android:id="@+id/befor_join_chat"
@@ -84,8 +74,7 @@
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/index_room">
+            app:layout_constraintStart_toStartOf="parent">
 
             <ListView
                 android:id="@+id/chat_list_befor_join"
@@ -159,12 +148,10 @@
             android:layout_marginTop="20dp"
             android:background="@drawable/botten_corner_rectangle_to_start"
             android:text="레디"
-            app:layout_constraintBottom_toTopOf="@+id/index_player"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.152"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.078" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/exit_btn2"
@@ -174,14 +161,12 @@
             android:background="@drawable/botten_corner_rectangle_to_start"
             android:onClick="onClickLeaveRoom"
             android:text="나가기"
-            app:layout_constraintBottom_toTopOf="@+id/index_player"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.815"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.077" />
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <ScrollView
+        <ListView
             android:id="@+id/index_player"
             android:layout_width="324dp"
             android:layout_height="368dp"
@@ -191,13 +176,7 @@
             app:layout_constraintHorizontal_bias="0.494"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.363">
-
-            <ListView
-                android:id="@+id/listViewPlayer"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-        </ScrollView>
+            app:layout_constraintVertical_bias="0.363" />
 
         <LinearLayout
             android:id="@+id/after_join_chat"
@@ -207,8 +186,7 @@
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/index_player">
+            app:layout_constraintStart_toStartOf="parent">
 
             <ListView
                 android:id="@+id/chat_list_after_join"
