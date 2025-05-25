@@ -13,7 +13,7 @@
         android:id="@+id/game_panel"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:visibility="visible"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -41,16 +41,16 @@
 
                 <TextView
                     android:id="@+id/singer_name"
-                    android:layout_width="126dp"
+                    android:layout_width="170dp"
                     android:layout_height="match_parent"
                     android:background="@drawable/name_round_corner_rectangle"
                     android:gravity="center"
                     android:text="가수명"
-                    android:textSize="30dp" />
+                    android:textSize="28sp" />
 
                 <TextView
                     android:id="@+id/round_count"
-                    android:layout_width="83dp"
+                    android:layout_width="90dp"
                     android:layout_height="match_parent"
                     android:background="@drawable/name_round_corner_rectangle"
                     android:gravity="center"
@@ -79,7 +79,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 
-            <androidx.recyclerview.widget.RecyclerView
+            <ListView
                 android:id="@+id/chat_list_in_game"
                 android:layout_width="match_parent"
                 android:layout_height="220dp"
@@ -94,7 +94,7 @@
                 android:orientation="horizontal">
 
                 <EditText
-                    android:id="@+id/chat_after_join"
+                    android:id="@+id/chat_game"
                     android:layout_width="355dp"
                     android:layout_height="52dp"
                     android:layout_weight="1"
@@ -108,13 +108,14 @@
                     android:textStyle="bold" />
 
                 <Button
-                    android:id="@+id/up_chat_after_join"
+                    android:id="@+id/btn_chat_game"
                     style="?android:attr/borderlessButtonStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="2"
                     android:background="@drawable/botten_corner_rectangle"
-                    android:text="Button"
+                    android:onClick="onClickGuess"
+                    android:text="전송"
                     android:textColor="#4b1045"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -125,6 +126,9 @@
             android:layout_width="76dp"
             android:layout_height="79dp"
             android:background="@drawable/timer_backgrond"
+            android:text="60"
+            android:textAlignment="center"
+            android:textSize="58sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.95"
@@ -143,8 +147,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="gone">
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/page_title2"
@@ -164,7 +167,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.059" />
 
-        <LinearLayout
+        <ListView
             android:id="@+id/answer_list"
             android:layout_width="342dp"
             android:layout_height="439dp"
@@ -175,24 +178,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/page_title2"
             tools:layout_editor_absoluteX="35dp"
-            tools:layout_editor_absoluteY="134dp">
-
-            <TextView
-                android:id="@+id/dt_trancform"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="TextView"
-                android:textSize="40sp" />
-
-            <TextView
-                android:id="@+id/good_trancform"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="TextView"
-                android:textSize="40sp" />
-        </LinearLayout>
+            tools:layout_editor_absoluteY="134dp" />
 
         <TextView
             android:id="@+id/answer"
@@ -215,12 +201,11 @@
         android:id="@+id/game_grade_panel"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:visibility="invisible"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="gone">
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:id="@+id/grade_tatle"
@@ -250,12 +235,13 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/name_round_corner_rectangle"
+                android:onClick="onClickCloseRank"
                 android:text="등수 숨김" />
 
         </LinearLayout>
 
         <ListView
-            android:id="@+id/glade_list"
+            android:id="@+id/grade_list"
             android:layout_width="370dp"
             android:layout_height="600dp"
             android:background="@drawable/vertical_liner_round_corner_rectangle"

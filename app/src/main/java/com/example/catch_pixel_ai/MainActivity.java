@@ -65,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
     private PlayerList playeradapter;
     private int currentRoomsNow;
     private int currentRoomsTotal;
+    private int totalRound = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,6 +129,26 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        //service로 부터 메세지를 받는 리시버 등록
+        serviceMessageReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if(intent == null || intent.getAction() == null){
+                    return;
+                }
+                String action = intent.getAction();
+
+                switch (action){
+                    case Client.ACTTION_MESSAGE_RECEIVED:
+                        String jsonMSG = intent.getStringExtra(Client.EXTRA_JSONMSG);
+                        handleServerMessage(jsonMSG);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        };
+
         if(savedInstanceState == null){
             //LoginActivity 실행 후 username을 반환받기 위한 Launcher 등록 ** 무조건 onCreate에서 정의해야 오류X
             loginResult = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
@@ -145,27 +166,8 @@ public class MainActivity extends AppCompatActivity {
                     });
 
             //LoginActivity 실행
+            Log.i(tag, "startLoginAcitivity");
             startLoginActivity();
-
-            //service로 부터 메세지를 받는 리시버 등록
-            serviceMessageReceiver = new BroadcastReceiver() {
-                @Override
-                public void onReceive(Context context, Intent intent) {
-                    if(intent == null || intent.getAction() == null){
-                        return;
-                    }
-                    String action = intent.getAction();
-
-                    switch (action){
-                        case Client.ACTTION_MESSAGE_RECEIVED:
-                            String jsonMSG = intent.getStringExtra(Client.EXTRA_JSONMSG);
-                            handleServerMessage(jsonMSG);
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            };
 
         }else{
             try {
@@ -187,7 +189,9 @@ public class MainActivity extends AppCompatActivity {
         //Game_main.Activity 실행
         Intent intent = new Intent(MainActivity.this, GameAcitivity.class);
         intent.putExtra("USERNAME", username);
+        intent.putExtra("totalRounds", totalRound);
         chatsadapter.clear();
+        playeradapter.clear();
         startActivity(intent);
     }
 
@@ -420,9 +424,10 @@ public class MainActivity extends AppCompatActivity {
                     handleRoomList(json.optJSONArray("rooms"));
                     break;
                 case "roomInfo":
-                    handleRoomInfo(json.optJSONArray("players"));
                     currentRoomsNow = json.optInt("currentGameSize");
                     currentRoomsTotal = json.optInt("capacity");
+                    totalRound = json.optInt("totalRounds");
+                    handleRoomInfo(json.optJSONArray("players"));
                     Log.i(tag,logMessage);
                     // TODO: 방 정보 파싱하여 플레이어 목록, 준비 상태 등 업데이트
                     break;
@@ -476,6 +481,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        chatsadapter.clear();
+        playeradapter.clear();
+        Intent requestIntent = new Intent(this, Client.class);
+        requestIntent.setAction(Client.ACTION_REQUEST_LAST_ROOM_INFO);
+        startService(requestIntent);
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         Log.d(tag, "MainActivity onDestroy called.");
@@ -513,8 +528,8 @@ public class MainActivity extends AppCompatActivity {
             TextView name = (TextView) rowView.findViewById(R.id.room_player_name);
 
             name.setText(roomNames.get(position));
-            round.setText("Round: " + roomRounds.get(position).toString());
-            player.setText("Player" + roomCurrents.get(position).toString() + "/" + roomCapacities.get(position).toString());
+            round.setText(roomRounds.get(position).toString());
+            player.setText(roomCurrents.get(position).toString() + "/" + roomCapacities.get(position).toString());
 
             return rowView;
         }

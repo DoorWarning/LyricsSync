@@ -32,6 +32,8 @@ public class Client extends Service {
     private final AtomicBoolean isConnected = new AtomicBoolean(false);
     private final AtomicBoolean isRunning = new AtomicBoolean(false);
     private LocalBroadcastManager broadcastManager;
+    private volatile String lastSongProblemJsonString = null;
+    private volatile String lastRoomInfoJsonString = null;
     
     //Intent 식별용 ACTION 정의
     public static final String ACTTION_CONNECT = "com.example.catch_pixel_ai.ACTTION_CONNECT";
@@ -39,6 +41,8 @@ public class Client extends Service {
     public static final String ACTTION_SENDJSON = "com.example.catch_pixel_ai.ACTTION_SENDJSON";
     public static final String ACTTION_MESSAGE_RECEIVED = "com.example.catch_pixel_ai.ACTTION_MESSAGE_RECEIVED";
     public static final String ACTTION_CONNECTIONSTATUS = "com.example.catch_pixel_ai.ACTTION_CONNECTIONSTATUS";
+    public static final String ACTION_REQUEST_LAST_GAME_STATE = "com.example.catch_pixel_ai.ACTION_REQUEST_LAST_GAME_STATE";
+    public static final String ACTION_REQUEST_LAST_ROOM_INFO = "com.example.catch_pixel_ai.ACTION_REQUEST_LAST_ROOM_INFO";
 
     //Intent를 통해 데이터를 주고 받기 위한 EXTRA 정의
     public static final String EXTRA_USERNAME = "com.example.catch_pixel_ai.EXTRA_USERNAME";
@@ -90,6 +94,16 @@ public class Client extends Service {
                         Log.w(TAG, "Send_JSON(action) ignored: Not connected.");
                     }
                     break;
+                case ACTION_REQUEST_LAST_GAME_STATE:
+                    if(lastSongProblemJsonString != null){
+                        broadcastSpecificMessage(ACTTION_MESSAGE_RECEIVED, Client.EXTRA_JSONMSG, lastSongProblemJsonString);
+                    }
+                    break;
+                case ACTION_REQUEST_LAST_ROOM_INFO:
+                    if(lastRoomInfoJsonString != null){
+                        broadcastSpecificMessage(ACTTION_MESSAGE_RECEIVED, Client.EXTRA_JSONMSG, lastRoomInfoJsonString);
+                    }
+                    break;
                 default:
                     Log.w(TAG, "Unknown action: " + action);
                     break;
@@ -137,6 +151,19 @@ public class Client extends Service {
 
                 String serverMsg;
                 while (isRunning.get() && (serverMsg = in.readLine()) !=null){
+
+                    try {
+                        JSONObject tempJson = new JSONObject(serverMsg);
+                        String type = tempJson.optString("type");
+                        if(type.equals("songProblem")){
+                            lastSongProblemJsonString = serverMsg;
+                        }else if(type.equals("roomInfo")){
+                            lastRoomInfoJsonString = serverMsg;
+                        }
+                    }catch (Exception e){
+
+                    }
+
                     broadcastMessage(serverMsg);
                 }
                 Log.d(TAG, "readLine null");
@@ -213,6 +240,11 @@ public class Client extends Service {
     private void broadcastConnectionStatus(boolean connedted){
         Intent intent = new Intent(ACTTION_CONNECTIONSTATUS);
         intent.putExtra(EXTRA_CONNECTIONSTATUS, connedted);
+        broadcastManager.sendBroadcast(intent);
+    }
+    private void broadcastSpecificMessage(String action, String extraKey, String message) {
+        Intent intent = new Intent(action);
+        intent.putExtra(extraKey, message);
         broadcastManager.sendBroadcast(intent);
     }
 }

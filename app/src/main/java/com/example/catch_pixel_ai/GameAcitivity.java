@@ -1,16 +1,28 @@
 package com.example.catch_pixel_ai;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ListAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.graphics.Insets;
@@ -18,7 +30,14 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 public class GameAcitivity extends AppCompatActivity {
 
@@ -30,6 +49,22 @@ public class GameAcitivity extends AppCompatActivity {
     private ConstraintLayout gamePanel;
     private ConstraintLayout answerPanel;
     private ConstraintLayout gradePanel;
+    private ListView chattingLayout;
+    private ListView problemLayout;
+    private ListView answerLayout;
+    private ListView rankingLayout;
+    private ArrayAdapter<String> chatAdapter;
+    private AnswerView answerAdapter;
+    private ProblemView problemAdapter;
+    private RankingView rankingAdapter;
+    ArrayList<String> problems;
+    ArrayList<String> answers;
+    ArrayList<String> rankings;
+    private int currentRound = 0;
+    private int totalRound = 0;
+    private CountDownTimer countDownTimer;
+    private static final int TIMEOUT_SECONDS = 60; // 라운드 시간 제한(초)
+    private TextView timeText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,10 +82,34 @@ public class GameAcitivity extends AppCompatActivity {
         gamePanel = findViewById(R.id.game_panel);
         answerPanel = findViewById(R.id.panel_check_anser);
         gradePanel = findViewById(R.id.game_grade_panel);
+        chattingLayout = findViewById(R.id.chat_list_in_game);
+        problemLayout = findViewById(R.id.question_list);
+        timeText = findViewById(R.id.timer);
+        answerLayout = findViewById(R.id.answer_list);
+        rankingLayout = findViewById(R.id.grade_list);
+
 
         gamePanel.setVisibility(View.VISIBLE);
         answerPanel.setVisibility(View.INVISIBLE);
-        gamePanel.setVisibility(View.INVISIBLE);
+        gradePanel.setVisibility(View.INVISIBLE);
+
+
+        chatAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
+        chattingLayout.setAdapter(chatAdapter);
+
+        problems = new ArrayList<String>();
+        problemAdapter = new ProblemView(this);
+        problemLayout.setAdapter(problemAdapter);
+
+        answers = new ArrayList<String>();
+        answerAdapter = new AnswerView(this);
+        answerLayout.setAdapter(answerAdapter);
+
+        rankings = new ArrayList<String>();
+        rankingAdapter = new RankingView(this);
+        rankingLayout.setAdapter(rankingAdapter);
+
+
 
         if(savedInstanceState == null){
             serviceMessageReceiver = new BroadcastReceiver() {
@@ -94,13 +153,25 @@ public class GameAcitivity extends AppCompatActivity {
         filter.addAction(Client.ACTTION_MESSAGE_RECEIVED);
         LocalBroadcastManager.getInstance(this).registerReceiver(serviceMessageReceiver, filter);
 
+        //
+        Intent requestIntent = new Intent(this, Client.class);
+        requestIntent.setAction(Client.ACTION_REQUEST_LAST_GAME_STATE);
+        startService(requestIntent);
+        //
+
+        chatAdapter.clear();
+        problems.clear();
+        answers.clear();
+        rankings.clear();
+
         gamePanel.setVisibility(View.VISIBLE);
         answerPanel.setVisibility(View.INVISIBLE);
-        gamePanel.setVisibility(View.INVISIBLE);
+        gradePanel.setVisibility(View.INVISIBLE);
 
         try {
             Intent intent = getIntent();
             username = intent.getStringExtra("USERNAME");
+            totalRound = intent.getIntExtra("totalRounds", 0);
         }catch (Exception e){
 
         }
@@ -112,39 +183,147 @@ public class GameAcitivity extends AppCompatActivity {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(serviceMessageReceiver);
     }
 
-    //60초 타이머 실행
-    private  void timerStart(){
-//        second = 60;
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                while(second >= 0 && timerFlag){
-//                    try {
-//                        Thread.sleep(1000);
-//                    }catch (Exception e){
-//
-//                    }
-//                    second--;
-//                    //타이머를 표시하는 뷰를 가져와서 .post
-//                    view.post(new Runnable(){
-//                        @Override
-//                        public void run() {
-//                            view.setText(String.valueOf(second));
-//                        }
-//                    });
-//                    //30초 일때
-//                    if(second == 30){
-//
-//                    }
-//                }
-//            }
-//        }).start();
+    // 타이머 실행
+    private  void StartTimers(){
+        cancelTimers();
+
+
+        countDownTimer = new CountDownTimer(TIMEOUT_SECONDS * 1000, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                timeText.setText(String.valueOf(millisUntilFinished/1000));
+            }
+
+            @Override
+            public void onFinish() {
+                timeText.setText("0");
+            }
+        };
+        countDownTimer.start();
+
+    }
+    // 타이머 취소
+    private void cancelTimers() {
+        if(countDownTimer != null){
+            countDownTimer.cancel();
+            countDownTimer = null;
+        }
     }
 
-    private void timerStop(){
-        timerFlag = false;
+    public void onClickGuess(View view){
+        EditText editText = findViewById(R.id.chat_game);
+        String msg = editText.getText().toString();
+        if(!msg.isEmpty()){
+            try{
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("type", "guess");
+                jsonObject.put("guess", msg);
+                Intent intent = new Intent(this, Client.class);
+                intent.setAction(Client.ACTTION_SENDJSON);
+                intent.putExtra(Client.EXTRA_JSONMSG,jsonObject.toString());
+                startService(intent);
+                editText.setText("");
+            }catch (Exception exception){
+
+            }
+        }
     }
 
+    public void onClickCloseRank(View view){
+        // 키보드 숨기기
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        View currentFocus = getCurrentFocus();
+        if (imm != null && currentFocus != null) {
+            imm.hideSoftInputFromWindow(currentFocus.getWindowToken(), 0);
+            currentFocus.clearFocus();  // 포커스도 제거
+        }
+
+        Intent intent = new Intent(GameAcitivity.this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(intent);
+        finish();
+    }
+
+    private void handleChat(String msg){
+        chatAdapter.add(msg);
+    }
+
+    private void handleSongProblem(JSONObject jsonObject){
+        answerPanel.setVisibility(View.INVISIBLE);
+        gamePanel.setVisibility(View.VISIBLE);
+
+        problems.clear();
+        chatAdapter.clear();
+
+        String singer = jsonObject.optString("singer");
+        String title = "가사";
+        String desciption = jsonObject.optString("description");
+        problems.add(title+":"+desciption);
+        currentRound = jsonObject.optInt("round");
+        ((TextView)findViewById(R.id.round_count)).setText(currentRound+"/"+totalRound);
+        ((TextView)findViewById(R.id.singer_name)).setText(singer);
+
+        timeText.setText("");
+        StartTimers();
+
+        runOnUiThread(()-> problemAdapter.notifyDataSetChanged());
+    }
+    private void handleHintProblem(JSONObject jsonObject){
+
+        String title = "힌트";
+        String hint = jsonObject.optString("hint");
+        problems.add(title+":"+hint);
+
+        runOnUiThread(()-> problemAdapter.notifyDataSetChanged());
+    }
+
+    private void handleAnswer(JSONObject jsonObject){
+        cancelTimers();
+        answers.clear();
+
+        String answer = jsonObject.optString("answer");
+        String original = jsonObject.optString("originalLyrics");
+        String problem = jsonObject.optString("translatedLyrics");
+
+        ((TextView)findViewById(R.id.answer)).setText(answer);
+
+        answers.add("문제:"+problem);
+        answers.add("가사:"+original);
+
+
+        gamePanel.setVisibility(View.INVISIBLE);
+        answerPanel.setVisibility(View.VISIBLE);
+
+        runOnUiThread(()-> answerAdapter.notifyDataSetChanged());
+    }
+
+    private void handleGameOver(JSONObject jsonObject){
+        rankings.clear();
+
+        try {
+            JSONArray ranking = jsonObject.getJSONArray("rankings");
+            if(ranking!=null && ranking.length()>0){
+                for(int i=0; i<ranking.length(); i++){
+                    JSONObject rankInfo = ranking.optJSONObject(i);
+                    if(rankInfo != null){
+                       String name = rankInfo.optString("username");
+                       int score = rankInfo.optInt("score");
+                       int rank = rankInfo.optInt("rank");
+
+                       rankings.add(name+":"+String.valueOf(score)+":"+String.valueOf(rank));
+                    }
+                }
+            }
+        }catch (Exception e){
+
+        }
+
+        gamePanel.setVisibility(View.INVISIBLE);
+        answerPanel.setVisibility(View.INVISIBLE);
+        gradePanel.setVisibility(View.VISIBLE);
+
+        runOnUiThread(()-> rankingAdapter.notifyDataSetChanged());
+    }
     private void handleServerMessage(String jsonMessage){
         if(jsonMessage == null) return;
         try {
@@ -170,27 +349,27 @@ public class GameAcitivity extends AppCompatActivity {
                 case "songProblem":
                     logMessage = "[문제] Round " + json.optInt("round") + ":\n" + json.optString("description");
                     Log.i(tag,logMessage);
+                    handleSongProblem(json);
                     break;
                 case "songHint":
                     logMessage = "[힌트] " + json.optString("hint");
                     Log.i(tag,logMessage);
+                    handleHintProblem(json);
                     break;
                 case "guessResult":
                     boolean correct = json.optBoolean("correct");
                     if (correct) {
                         logMessage = "[결과] " + json.optString("guesser") + " 정답! (+" + json.optInt("scoreEarned") + "점)";
                     } else {
-                        // 오답은 UI에 표시하지 않거나, 본인 오답만 표시 (서버 로직 확인 필요)
-                        if(json.optString("guesser").equals(username)){ // 임시로 사용자 이름 비교
-                            logMessage = "[결과] '" + json.optString("guess") + "' (오답)";
-                        } else {
-                            logMessage = null; // 다른 사람 오답은 로그 안 함
-                        }
+                        logMessage = json.optString("username") + ": " + json.optString("message");
+                        Log.i(tag, logMessage);
+                        handleChat(logMessage);
                     }
                     Log.i(tag,logMessage);
                     break;
                 case "roundResult":
                     logMessage = "[라운드 종료] " + json.optString("answer");
+                    handleAnswer(json);
                     // TODO: 점수판 업데이트
                     Log.i(tag,logMessage);
                     break;
@@ -198,6 +377,7 @@ public class GameAcitivity extends AppCompatActivity {
                     logMessage = "[게임 종료]\n" + json.optString("message");
                     // TODO: 최종 결과 표시
                     Log.i(tag,logMessage);
+                    handleGameOver(json);
                     break;
                 case "playerLeft":
                     logMessage = "[SYSTEM] " + json.optString("username") + "님이 나갔습니다.";
@@ -211,21 +391,101 @@ public class GameAcitivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.d(tag, "onDestroy called.");
-
-        if (isFinishing()) {
-            Log.d(tag, "GameActivity is finishing. Sending disconnect to service.");
-            Intent serviceIntent = new Intent(this, Client.class);
-            serviceIntent.setAction(Client.ACTTION_DISCONNECT);
-            startService(serviceIntent); // 서비스에 연결 해제 명령
-        }
-    }
 
     @Override
     public void onBackPressed() {
 
+    }
+
+    public class ProblemView extends ArrayAdapter<String>{
+        private final Activity context;
+
+        public ProblemView(Activity context){
+            super(context, R.layout.problem_view);
+            this.context = context;
+        }
+
+        @Override
+        public int getCount() {
+            return problems.size();
+        }
+
+        @NonNull
+        @Override
+        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+            LayoutInflater inflater = context.getLayoutInflater();
+            View rowView = inflater.inflate(R.layout.problem_view, null, true);
+
+            TextView title = (TextView) rowView.findViewById(R.id.titleProblem);
+            TextView description = (TextView) rowView.findViewById(R.id.descriptionProblem);
+
+            String[] tokens = problems.get(position).split(":");
+            title.setText(tokens[0]);
+            description.setText(tokens[1]);
+
+            return rowView;
+        }
+    }
+
+    public class AnswerView extends ArrayAdapter<String>{
+        private final Activity context;
+
+        public AnswerView(Activity context){
+            super(context, R.layout.problem_view);
+            this.context = context;
+        }
+
+        @Override
+        public int getCount() {
+            return answers.size();
+        }
+
+        @NonNull
+        @Override
+        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+            LayoutInflater inflater = context.getLayoutInflater();
+            View rowView = inflater.inflate(R.layout.problem_view, null, true);
+
+            TextView title = (TextView) rowView.findViewById(R.id.titleProblem);
+            TextView description = (TextView) rowView.findViewById(R.id.descriptionProblem);
+
+            String[] tokens = answers.get(position).split(":");
+            title.setText(tokens[0]);
+            description.setText(tokens[1]);
+
+            return rowView;
+        }
+    }
+
+    public class RankingView extends ArrayAdapter<String>{
+        private final Activity context;
+
+        public RankingView(Activity context){
+            super(context, R.layout.ranking_view);
+            this.context = context;
+        }
+
+        @Override
+        public int getCount() {
+            return rankings.size();
+        }
+
+        @NonNull
+        @Override
+        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+            LayoutInflater inflater = context.getLayoutInflater();
+            View rowView = inflater.inflate(R.layout.ranking_view, null, true);
+
+            TextView username = (TextView) rowView.findViewById(R.id.textName);
+            TextView score = (TextView) rowView.findViewById(R.id.textScore);
+            TextView rank = (TextView) rowView.findViewById(R.id.textRank);
+
+            String[] tokens = rankings.get(position).split(":");
+            username.setText(tokens[0]);
+            score.setText(tokens[1]);
+            rank.setText(tokens[2]);
+
+            return rowView;
+        }
     }
 }
