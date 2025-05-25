@@ -236,7 +236,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/name_round_corner_rectangle"
                 android:onClick="onClickCloseRank"
-                android:text="등수 숨김" />
+                android:text="닫기" />
 
         </LinearLayout>
 
