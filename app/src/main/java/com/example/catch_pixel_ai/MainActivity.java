@@ -204,11 +204,11 @@ public class MainActivity extends AppCompatActivity {
     public void onClickShowCreateRoom(View view){
         Animation.btnAnimation(view);
         if(roomPopupLayout.getVisibility() == View.INVISIBLE){
-            roomPopupLayout.setVisibility(View.VISIBLE);
+            Animation.onAlphaAnimation(roomPopupLayout);
             ((Button)findViewById(R.id.creat_room_btn)).setText("생성 창 닫기");
         }
         else{
-            roomPopupLayout.setVisibility(View.INVISIBLE);
+            Animation.offAlphaAnimation(roomPopupLayout);
             ((Button)findViewById(R.id.creat_room_btn)).setText("방 생성");
         }
 
@@ -307,7 +307,6 @@ public class MainActivity extends AppCompatActivity {
                 intent.setAction(Client.ACTTION_SENDJSON);
                 intent.putExtra(Client.EXTRA_JSONMSG, jsonObject.toString());
                 startService(intent);
-
             }catch (Exception e){
 
             }
@@ -317,7 +316,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void onClickExit(View view){
         Animation.btnAnimation(view);
-        exitLayout.setVisibility(View.VISIBLE);
+//        exitLayout.setVisibility(View.VISIBLE);
+        Animation.onAlphaAnimation(exitLayout);
     }
 
     public void onClickExitYes(View view){
@@ -343,7 +343,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFinish() {
-                exitLayout.setVisibility(View.INVISIBLE);
+                Animation.offAlphaAnimation(exitLayout);
             }
         }.start();
     }

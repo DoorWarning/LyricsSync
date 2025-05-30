@@ -45,6 +45,73 @@ public class Animation {
         alphaAnimator.start();
     }
 
+    public static void onAlphaAnimation(View view){
+        ValueAnimator alphaAnimator = ValueAnimator.ofFloat(0.0f, 1.0f);
+        alphaAnimator.setDuration(500);
+        alphaAnimator.setInterpolator(new AnticipateOvershootInterpolator());
+        alphaAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(@NonNull ValueAnimator animation) {
+                view.setAlpha((float) animation.getAnimatedValue());
+            }
+        });
+        alphaAnimator.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(@NonNull Animator animation) {
+                view.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAnimationEnd(@NonNull Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationCancel(@NonNull Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(@NonNull Animator animation) {
+
+            }
+        });
+        alphaAnimator.start();
+    }
+    public static void offAlphaAnimation(View view){
+        ValueAnimator alphaAnimator = ValueAnimator.ofFloat(1.0f, 0.0f);
+        alphaAnimator.setDuration(500);
+        alphaAnimator.setInterpolator(new AnticipateOvershootInterpolator());
+        alphaAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(@NonNull ValueAnimator animation) {
+                view.setAlpha((float) animation.getAnimatedValue());
+            }
+        });
+        alphaAnimator.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(@NonNull Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(@NonNull Animator animation) {
+                view.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void onAnimationCancel(@NonNull Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(@NonNull Animator animation) {
+
+            }
+        });
+        alphaAnimator.start();
+    }
+
     public static void chattingAnimation(View view){
         ValueAnimator animatorX = ValueAnimator.ofFloat(1.0f, 0.9f);
         ValueAnimator animatorX1 = ValueAnimator.ofFloat(0.9f, 1.0f);
