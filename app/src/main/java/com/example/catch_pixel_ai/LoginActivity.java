@@ -2,8 +2,10 @@ package com.example.catch_pixel_ai;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -20,6 +22,9 @@ public class LoginActivity extends AppCompatActivity {
     private String USERNAME;
     private long backKeyPressedTime = 0;
     private Toast toast;
+    private CountDownTimer animationTimer;
+    private final int ANIMATION_SECONDS = 300;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,18 +36,45 @@ public class LoginActivity extends AppCompatActivity {
             return insets;
         });
     }
+    private void startAnimationTimer(){
+        cancelTimers();
+
+        animationTimer = new CountDownTimer(ANIMATION_SECONDS, 100) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+            }
+
+            @Override
+            public void onFinish() {
+                finish();
+            }
+        }.start();
+    }
+    // 타이머 취소
+    private void cancelTimers() {
+        if(animationTimer != null){
+            animationTimer.cancel();
+            animationTimer = null;
+        }
+    }
 
     public void onClickLogin(View view){
         EditText editText = findViewById(R.id.editUsername);
 
         String input = editText.getText().toString();
-        
-        if(input.trim().isEmpty())
+
+        Animation.btnAnimation(view);
+
+        if(input.trim().isEmpty()) {
             Toast.makeText(this, "닉네임을 입력해주세요.", Toast.LENGTH_SHORT).show();
+            Animation.xAnimation(editText);
+        }
         else if (input.trim().length() < 2 || input.trim().length() > 12) {
             Toast.makeText(this, "잘못된 닉네임입니다. 2자 이상 12자 이하를 입력하세요.", Toast.LENGTH_SHORT).show();
+            Animation.xAnimation(editText);
         } else if (!input.matches("^[a-zA-Z0-9가-힣]*$")) {
             Toast.makeText(this, "사용자 이름은 영문, 숫자, 한글만 사용 가능합니다.", Toast.LENGTH_SHORT).show();
+            Animation.xAnimation(editText);
         } else{
             //username을 반환하기 위한 Intent 생성
             Intent intent = new Intent();
@@ -56,7 +88,7 @@ public class LoginActivity extends AppCompatActivity {
             serviceIntent.putExtra(Client.EXTRA_USERNAME, USERNAME);
             startService(serviceIntent);
 
-            finish();
+            startAnimationTimer();
         }
     }
 

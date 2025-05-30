@@ -1,5 +1,6 @@
 package com.example.catch_pixel_ai;
 
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -11,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.LinearInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -65,6 +67,8 @@ public class GameAcitivity extends AppCompatActivity {
     private CountDownTimer countDownTimer;
     private static final int TIMEOUT_SECONDS = 60; // 라운드 시간 제한(초)
     private TextView timeText;
+    private CountDownTimer animationTimer;
+    private final int ANIMATION_SECONDS = 300;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -184,9 +188,8 @@ public class GameAcitivity extends AppCompatActivity {
     }
 
     // 타이머 실행
-    private  void StartTimers(){
+    private void StartTimers(){
         cancelTimers();
-
 
         countDownTimer = new CountDownTimer(TIMEOUT_SECONDS * 1000, 1000) {
             @Override
@@ -211,7 +214,9 @@ public class GameAcitivity extends AppCompatActivity {
     }
 
     public void onClickGuess(View view){
+        Animation.btnAnimation(view);
         EditText editText = findViewById(R.id.chat_game);
+        Animation.chattingAnimation(editText);
         String msg = editText.getText().toString();
         if(!msg.isEmpty()){
             try{
@@ -230,6 +235,7 @@ public class GameAcitivity extends AppCompatActivity {
     }
 
     public void onClickCloseRank(View view){
+        Animation.btnAnimation(view);
         // 키보드 숨기기
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         View currentFocus = getCurrentFocus();
@@ -241,11 +247,39 @@ public class GameAcitivity extends AppCompatActivity {
         Intent intent = new Intent(GameAcitivity.this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);
-        finish();
+        animationTimer = new CountDownTimer(ANIMATION_SECONDS, 100) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+
+            }
+
+            @Override
+            public void onFinish() {
+                finish();
+            }
+        };
     }
 
     private void handleChat(String msg){
         chatAdapter.add(msg);
+        int positon = chatAdapter.getCount()-1;
+        if(positon >= 0){
+            chattingLayout.smoothScrollToPosition(positon);
+            View newView = chattingLayout.getChildAt(positon);
+            if(newView != null){
+                ValueAnimator animator = ValueAnimator.ofFloat(0.0f, 1.0f);
+                animator.setDuration(5000);
+                animator.setInterpolator(new LinearInterpolator());
+                animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                    @Override
+                    public void onAnimationUpdate(@NonNull ValueAnimator animation) {
+                        float value = (float) animation.getAnimatedValue();
+                        newView.setAlpha(value);
+                    }
+                });
+                animator.start();
+            }
+        }
     }
 
     private void handleSongProblem(JSONObject jsonObject){
@@ -274,7 +308,11 @@ public class GameAcitivity extends AppCompatActivity {
         String hint = jsonObject.optString("hint");
         problems.add(title+":"+hint);
 
-        runOnUiThread(()-> problemAdapter.notifyDataSetChanged());
+        runOnUiThread(()-> {
+            problemAdapter.notifyDataSetChanged();
+            int position = problemAdapter.getCount() - 1;
+            problemLayout.smoothScrollToPosition(position);
+        });
     }
 
     private void handleAnswer(JSONObject jsonObject){

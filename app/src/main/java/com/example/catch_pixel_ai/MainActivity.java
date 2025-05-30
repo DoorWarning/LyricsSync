@@ -1,5 +1,6 @@
 package com.example.catch_pixel_ai;
 
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -7,10 +8,12 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 
+import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.LinearInterpolator;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -66,6 +69,9 @@ public class MainActivity extends AppCompatActivity {
     private int currentRoomsNow;
     private int currentRoomsTotal;
     private int totalRound = 0;
+    private CountDownTimer animationTimer;
+    private final int ANIMATION_SECONDS = 300;
+    private boolean isReady = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -196,6 +202,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClickShowCreateRoom(View view){
+        Animation.btnAnimation(view);
         if(roomPopupLayout.getVisibility() == View.INVISIBLE){
             roomPopupLayout.setVisibility(View.VISIBLE);
             ((Button)findViewById(R.id.creat_room_btn)).setText("생성 창 닫기");
@@ -208,20 +215,39 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClickReady(View view){
-        try{
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("type", "ready");
-            jsonObject.put("status", true);
-            Intent intent = new Intent(this, Client.class);
-            intent.setAction(Client.ACTTION_SENDJSON);
-            intent.putExtra(Client.EXTRA_JSONMSG,jsonObject.toString());
-            startService(intent);
-        }catch (Exception exception){
+        Animation.btnAnimation(view);
+        if(!isReady){
+            try{
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("type", "ready");
+                jsonObject.put("status", true);
+                Intent intent = new Intent(this, Client.class);
+                intent.setAction(Client.ACTTION_SENDJSON);
+                intent.putExtra(Client.EXTRA_JSONMSG,jsonObject.toString());
+                startService(intent);
+                isReady = true;
+            }catch (Exception exception){
 
+            }
+        }else{
+            try{
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("type", "ready");
+                jsonObject.put("status", false);
+                Intent intent = new Intent(this, Client.class);
+                intent.setAction(Client.ACTTION_SENDJSON);
+                intent.putExtra(Client.EXTRA_JSONMSG,jsonObject.toString());
+                startService(intent);
+                isReady = false;
+            }catch (Exception exception){
+
+            }
         }
+
     }
 
     public void onClickRefreshRoomList(View view){
+        Animation.btnAnimation(view);
         try {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("type", "getRoomList");
@@ -235,6 +261,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClickCreateRoom(View view){
+        Animation.btnAnimation(view);
 
         String roomName = ((EditText)findViewById(R.id.creat_room_title)).getText().toString();
         String roomRound = ((EditText)findViewById(R.id.creat_round_count)).getText().toString();
@@ -254,6 +281,23 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "잘못된 라운드 수 입니다. 1 이상여야 합니다.", Toast.LENGTH_SHORT).show();
         } else{
             try {
+                animationTimer = new CountDownTimer(ANIMATION_SECONDS, 100) {
+                    @Override
+                    public void onTick(long millisUntilFinished) {
+                    }
+
+                    @Override
+                    public void onFinish() {
+                        ((EditText)findViewById(R.id.creat_round_count)).setText("");
+                        ((EditText)findViewById(R.id.creat_room_title)).setText("");
+                        ((EditText)findViewById(R.id.creat_player_count)).setText("");
+                        ((Button)findViewById(R.id.creat_room_btn)).setText("방 생성");
+                        roomPopupLayout.setVisibility(View.INVISIBLE);
+                        roomLayout.setVisibility(View.VISIBLE);
+                        lobyLayout.setVisibility(View.INVISIBLE);
+                        chatsadapter.clear();
+                    }
+                }.start();
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("type", "createRoom");
                 jsonObject.put("roomName", roomName);
@@ -263,32 +307,50 @@ public class MainActivity extends AppCompatActivity {
                 intent.setAction(Client.ACTTION_SENDJSON);
                 intent.putExtra(Client.EXTRA_JSONMSG, jsonObject.toString());
                 startService(intent);
-                ((EditText)findViewById(R.id.creat_round_count)).setText("");
-                ((EditText)findViewById(R.id.creat_room_title)).setText("");
-                ((EditText)findViewById(R.id.creat_player_count)).setText("");
+
             }catch (Exception e){
 
             }
-            roomPopupLayout.setVisibility(View.INVISIBLE);
-            roomLayout.setVisibility(View.VISIBLE);
-            lobyLayout.setVisibility(View.INVISIBLE);
-            chatsadapter.clear();
+
         }
     }
 
     public void onClickExit(View view){
+        Animation.btnAnimation(view);
         exitLayout.setVisibility(View.VISIBLE);
     }
 
     public void onClickExitYes(View view){
-        finish();
+        Animation.btnAnimation(view);
+        animationTimer = new CountDownTimer(ANIMATION_SECONDS, 100) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+            }
+
+            @Override
+            public void onFinish() {
+                finish();
+            }
+        }.start();
     }
 
     public void onClickExitNo(View view){
-        exitLayout.setVisibility(View.INVISIBLE);
+        Animation.btnAnimation(view);
+        animationTimer = new CountDownTimer(ANIMATION_SECONDS, 100) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+            }
+
+            @Override
+            public void onFinish() {
+                exitLayout.setVisibility(View.INVISIBLE);
+            }
+        }.start();
     }
 
     public void onClickLeaveRoom(View view){
+        Animation.btnAnimation(view);
+
         try {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("type", "leaveRoom");
@@ -296,16 +358,28 @@ public class MainActivity extends AppCompatActivity {
             intent.setAction(Client.ACTTION_SENDJSON);
             intent.putExtra(Client.EXTRA_JSONMSG,jsonObject.toString());
             startService(intent);
-            chatsadapter.clear();
-            roomLayout.setVisibility(View.INVISIBLE);
-            lobyLayout.setVisibility(View.VISIBLE);
+
         }catch (Exception e){
 
         }
+        animationTimer = new CountDownTimer(ANIMATION_SECONDS, 100) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+            }
+
+            @Override
+            public void onFinish() {
+                chatsadapter.clear();
+                roomLayout.setVisibility(View.INVISIBLE);
+                lobyLayout.setVisibility(View.VISIBLE);
+            }
+        }.start();
     }
 
     public void onClickLobbyMsg(View view){
+        Animation.btnAnimation(view);
         EditText editText = findViewById(R.id.chat_befor_join);
+        Animation.chattingAnimation(editText);
         String msg = editText.getText().toString();
         if(!msg.isEmpty()){
             try{
@@ -325,7 +399,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClickRoomMsg(View view){
+        Animation.btnAnimation(view);
         EditText editText = findViewById(R.id.chat_after_join);
+        Animation.chattingAnimation(editText);
         String msg = editText.getText().toString();
         if(!msg.isEmpty()){
             try{
@@ -346,10 +422,46 @@ public class MainActivity extends AppCompatActivity {
 
     private void handleRoomMSG(String message){
         chatsadapter.add(message);
+        int positon = chatsadapter.getCount()-1;
+        if(positon >= 0){
+            roommsgLayout.smoothScrollToPosition(positon);
+            View newView = roommsgLayout.getChildAt(positon);
+            if(newView != null){
+                ValueAnimator animator = ValueAnimator.ofFloat(0.0f, 1.0f);
+                animator.setDuration(5000);
+                animator.setInterpolator(new LinearInterpolator());
+                animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                    @Override
+                    public void onAnimationUpdate(@NonNull ValueAnimator animation) {
+                        float value = (float) animation.getAnimatedValue();
+                        newView.setAlpha(value);
+                    }
+                });
+                animator.start();
+            }
+        }
     }
 
     private void handleLobbyMSG(String message){
         chatsadapter.add(message);
+        int positon = chatsadapter.getCount()-1;
+        if(positon >= 0){
+            lobbymsgLayout.smoothScrollToPosition(positon);
+            View newView = lobbymsgLayout.getChildAt(positon);
+            if(newView != null){
+                ValueAnimator animator = ValueAnimator.ofFloat(0.0f, 1.0f);
+                animator.setDuration(5000);
+                animator.setInterpolator(new LinearInterpolator());
+                animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                    @Override
+                    public void onAnimationUpdate(@NonNull ValueAnimator animation) {
+                        float value = (float) animation.getAnimatedValue();
+                        newView.setAlpha(value);
+                    }
+                });
+                animator.start();
+            }
+        }
     }
 
     private void handleRoomInfo(JSONArray players){
@@ -362,17 +474,26 @@ public class MainActivity extends AppCompatActivity {
         roomplayers.clear();
         playerReady.clear();
 
+        int position = -1;
+
         if (players != null) {
             for (int i = 0; i < players.length(); i++) {
                 JSONObject player = players.optJSONObject(i);
                 if (player != null) {
                     roomplayers.add(player.optString("username"));
                     playerReady.add(player.optBoolean("ready"));
+                    if(player.optString("username").equals(username))
+                        position = roomplayers.size()-1;
                 }
             }
         }
 
-        runOnUiThread(() -> playeradapter.notifyDataSetChanged());
+        final int finalPostion = position;
+        runOnUiThread(() ->{
+            playeradapter.notifyDataSetChanged();
+            if(finalPostion >=0)
+                playerListLayout.smoothScrollToPosition(finalPostion);
+        });
     }
 
     private void handleRoomList(JSONArray rooms){
@@ -394,7 +515,14 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
-        runOnUiThread(() -> roomadapter.notifyDataSetChanged());
+        runOnUiThread(() -> {
+            roomadapter.notifyDataSetChanged();
+
+            int lastPosition = roomadapter.getCount() - 1;
+            if (lastPosition >= 0) {
+                roomListLayout.smoothScrollToPosition(lastPosition);
+            }
+        });
     }
 
     private void handleServerMessage(String jsonMessage){
