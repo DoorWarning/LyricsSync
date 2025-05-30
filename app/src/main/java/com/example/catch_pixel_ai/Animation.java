@@ -9,8 +9,12 @@ import android.view.animation.AnticipateInterpolator;
 import android.view.animation.AnticipateOvershootInterpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+
+import org.w3c.dom.Text;
 
 public class Animation {
 
@@ -26,6 +30,19 @@ public class Animation {
             }
         });
         animatorX.start();
+    }
+
+    public static void timerAnimation(View view){
+        ValueAnimator alphaAnimator = ValueAnimator.ofFloat(0.8f, 1.0f);
+        alphaAnimator.setDuration(500);
+        alphaAnimator.setInterpolator(new AnticipateOvershootInterpolator());
+        alphaAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(@NonNull ValueAnimator animation) {
+                view.setAlpha((float) animation.getAnimatedValue());
+            }
+        });
+        alphaAnimator.start();
     }
 
     public static void chattingAnimation(View view){

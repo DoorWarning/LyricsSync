@@ -195,6 +195,7 @@ public class GameAcitivity extends AppCompatActivity {
             @Override
             public void onTick(long millisUntilFinished) {
                 timeText.setText(String.valueOf(millisUntilFinished/1000));
+                Animation.timerAnimation(timeText);
             }
 
             @Override
