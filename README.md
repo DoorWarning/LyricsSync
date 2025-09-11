@@ -1,7 +1,10 @@
 # 모바일프로그래밍(2025-1) 프로젝트 LyricsSync
 
 ## Demo 시연
+<p align="center">
 ![git](./Demo/demo.gif)
+</p>
+
 ## 시작 화면
 <p align="center">
 <img src= "https://github.com/DoorWarning/LyricsSync/blob/master/Demo/StartScreen.png" alt="startscreen" width="30%">
