@@ -4,8 +4,8 @@
 ## 시작 화면
 <img src= "https://github.com/DoorWarning/LyricsSync/blob/master/Demo/StartScreen.png" alt="startscreen" width="50%">
 ## 로비 화면
-![lobby](./Demo/LobbyScreen.png)
+<img src= "https://github.com/DoorWarning/LyricsSync/blob/master/Demo/LobbyScreen.png" alt="lobbyscreen" width="50%">
 ## 방생성 화면
-![create](./Demo/CreateRoomScreen.png)
+<img src= "https://github.com/DoorWarning/LyricsSync/blob/master/Demo/CreateRoomScreen.png" alt="createscreen" width="50%">
 ## 게임대기 화면
-![room](./Demo/GameRoomScreen.png)
+<img src= "https://github.com/DoorWarning/LyricsSync/blob/master/Demo/GameRoomScreen.png" alt="gameroomscreen" width="50%">
