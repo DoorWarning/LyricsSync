@@ -2,7 +2,7 @@
 
 ## Demo 시연
 <p align="center">
-  <img src="https://github.com/DoorWarning/LyricsSync/master/Demo/demo.gif" alt="demo gif">
+  <img src="https://github.com/DoorWarning/LyricsSync/blob/master/Demo/demo.gif" alt="demo gif">
 </p>
 
 ## 시작 화면
