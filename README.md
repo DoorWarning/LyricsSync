@@ -2,25 +2,25 @@
 
 ## Demo 시연
 <p align="center">
-![git](./Demo/demo.gif)
+  <img src="https://github.com/DoorWarning/LyricsSync/master/Demo/demo.gif" alt="demo gif">
 </p>
 
 ## 시작 화면
 <p align="center">
-<img src= "https://github.com/DoorWarning/LyricsSync/blob/master/Demo/StartScreen.png" alt="startscreen" width="30%">
+  <img src= "https://github.com/DoorWarning/LyricsSync/blob/master/Demo/StartScreen.png" alt="startscreen" width="30%">
 </p>
 
 ## 로비 화면
 <p align="center">
-<img src= "https://github.com/DoorWarning/LyricsSync/blob/master/Demo/LobbyScreen.png" alt="lobbyscreen" width="30%">
+  <img src= "https://github.com/DoorWarning/LyricsSync/blob/master/Demo/LobbyScreen.png" alt="lobbyscreen" width="30%">
 </p>
 
 ## 방생성 화면
 <p align="center">
-<img src= "https://github.com/DoorWarning/LyricsSync/blob/master/Demo/CreateRoomScreen.png" alt="createscreen" width="30%">
+  <img src= "https://github.com/DoorWarning/LyricsSync/blob/master/Demo/CreateRoomScreen.png" alt="createscreen" width="30%">
 </p>
 
 ## 게임대기 화면
 <p align="center">
-<img src= "https://github.com/DoorWarning/LyricsSync/blob/master/Demo/GameRoomScreen.png" alt="gameroomscreen" width="30%">
+  <img src= "https://github.com/DoorWarning/LyricsSync/blob/master/Demo/GameRoomScreen.png" alt="gameroomscreen" width="30%">
 </p>
