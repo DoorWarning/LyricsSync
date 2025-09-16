@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class Client extends Service {
     private static final String TAG = "NetworkClientService";
 //    private static final String IP = "10.0.2.2"; //서버 아이피 주소 (10.0.2.2 : localhost)
-    private static final String IP = "20.249.217.70"; //서버 아이피 주소 (10.0.2.2 : localhost)
+    private static final String IP = ""; //서버 아이피 주소 (10.0.2.2 : localhost)
     private static final int PORT = 55555; //서버 포트
 
     private ExecutorService networkExecutor;
